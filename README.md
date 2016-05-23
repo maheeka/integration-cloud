@@ -1,21 +1,5 @@
-Welcome to WSO2 App Cloud
+Welcome to WSO2 Integration Cloud
 =========================
-
-App Cloud enables you to host applications written in multiple languages on multiple runtimes such as wso2 application server, ms4j, wso2 integration server etc.
-
-##High level features
-
-* application/service hosting
-* custom URL for application endpoints
-* runtime logs of deployed applications
-* configurable application scaling factors
-* application revision management
-* dashboards(application and runtime statistics)
-* support of env variables
-* tagging application(stage=Dev, version=2.0.0 etc)
-* mysql database support
-* container specifications to create docker containers
-* tier implementation
 
 ##Getting Help
 
