@@ -1,0 +1,6 @@
+FROM dell/tomcat:latest
+
+ENV APP_WAR ARTIFACT_NAME
+ENV WEB_APP_HOME /opt/tomcat/webapps/
+
+COPY "$APP_WAR" "$WEB_APP_HOME/"
