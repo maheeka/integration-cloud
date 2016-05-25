@@ -42,7 +42,7 @@ public class IntCloudUtil {
 
     static {
         try {
-            loadAppCloudConfig();
+            loadIntCloudConfig();
         } catch (IntCloudException e) {
             String message = "Unable to load AppCloud configuration file";
             log.error(message, e);
@@ -54,7 +54,7 @@ public class IntCloudUtil {
      *
      * @throws IntCloudException
      */
-    private static void loadAppCloudConfig() throws IntCloudException {
+    private static void loadIntCloudConfig() throws IntCloudException {
         String fileLocation = new StringBuilder().append(CarbonUtils.getCarbonConfigDirPath()).append(File.separator)
                 .append(IntCloudConstant.CONFIG_FOLDER).append(File.separator).append(IntCloudConstant.CONFIG_FILE_NAME)
                 .toString();
@@ -91,14 +91,14 @@ public class IntCloudUtil {
     public static String getPropertyValue(String property) {
         String value = properties.getProperty(property);
         if (value == null) {
-            String message = "The given property: " + property + " is not found from the AppCloud.properties file";
+            String message = "The given property: " + property + " is not found from the " + IntCloudConstant.CONFIG_FILE_NAME + " file";
             log.warn(message);
         }
         return value;
     }
 
     public static String getAuthHeader(String username) throws IntCloudException {
-        log.error("NOT IMPLEMENTED");
+        log.error("INTCLOUD : NOT IMPLEMENTED");
         return null;
 
 //        //Get the filesystem keystore default primary certificate
