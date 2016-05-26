@@ -1,0 +1,17 @@
+FROM java:7
+
+ENV CARBON_APP_ZIP ARTIFACT_NAME 
+ENV CARBON_APP_NAME ARTIFACT_DIR 
+ENV UPLOAD_PATH /tmp/
+ENV SERVER_PATH /mnt/
+
+COPY "$CARBON_APP_ZIP" "$UPLOAD_PATH/"
+RUN apt-get update && \
+    apt-get install -y zip && \
+    apt-get clean && \
+    unzip -q "$UPLOAD_PATH/$CARBON_APP_ZIP" -d "$SERVER_PATH"
+
+ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
+EXPOSE 9443 9763
+CMD ["sh", "-c", "${SERVER_PATH}/${CARBON_APP_NAME}/bin/wso2server.sh"]
+

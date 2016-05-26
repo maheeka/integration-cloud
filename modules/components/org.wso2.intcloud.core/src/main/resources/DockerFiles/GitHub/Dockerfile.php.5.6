@@ -1,0 +1,8 @@
+FROM php:5.6-apache
+
+ENV WEB_ROOT /var/www/html/
+
+RUN apt-get update && apt-get install -y git
+RUN git clone GIT_REPO_URL --branch GIT_REPO_BRANCH --single-branch "$WEB_ROOT/"
+
+

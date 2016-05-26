@@ -88,6 +88,11 @@
                 <version>${appcloud.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.wso2.appcloud</groupId>
+                <artifactId>org.wso2.intcloud.common</artifactId>
+                <version>${appcloud.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>io.fabric8</groupId>
                 <artifactId>kubernetes-api</artifactId>
                 <version>2.2.100</version>
@@ -219,6 +224,8 @@
         <module>modules/components/org.wso2.appcloud.common</module>
         <module>modules/components/org.wso2.appcloud.core</module>
         <module>modules/components/org.wso2.appcloud.provisioning.runtime</module>
+        <module>modules/components/org.wso2.intcloud.common</module>
+        <module>modules/components/org.wso2.intcloud.core</module>
         <module>modules/jaggeryapps/appmgt</module>
         <module>modules/webapps/appCloudTierapi</module>
         
