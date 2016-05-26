@@ -19,10 +19,10 @@ package org.wso2.intcloud.core;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.appcloud.common.util.AppCloudUtil;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 import org.wso2.intcloud.common.IntCloudException;
+import org.wso2.intcloud.common.util.IntCloudUtil;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -46,7 +46,7 @@ public class DBUtil {
             PrivilegedCarbonContext threadLocalCarbonContext = PrivilegedCarbonContext.getThreadLocalCarbonContext();
             threadLocalCarbonContext.setTenantId(MultitenantConstants.SUPER_TENANT_ID, true);
             try {
-                String datasourceName = AppCloudUtil.getPropertyValue(DATASOURCE_NAME);
+                String datasourceName = IntCloudUtil.getPropertyValue(DATASOURCE_NAME);
                 InitialContext context = new InitialContext();
                 dataSource = (DataSource)context.lookup(datasourceName);
                 if(log.isDebugEnabled()){

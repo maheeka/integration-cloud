@@ -44,7 +44,6 @@ public class ApplicationManager {
      * @throws AppCloudException
      */
     public static void addApplication(Application application) throws AppCloudException {
-        log.info("Adding application");
         ApplicationDAO applicationDAO = new ApplicationDAO();
         Connection dbConnection = DBUtil.getDBConnection();
         int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();

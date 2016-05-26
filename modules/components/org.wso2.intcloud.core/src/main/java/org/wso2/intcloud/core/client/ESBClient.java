@@ -86,30 +86,9 @@ public class ESBClient {
             } catch (RemoteException e) {
                 throw new IntCloudException(e.getMessage(),e);
             }
-
-
-
-
-
-
         } catch (AxisFault axisFault) {
             log.error("Error deploying carbon application", axisFault);
             throw new IntCloudException("Error deploying carbon application : " + axisFault.getMessage());
-
         }
     }
-
-
-
-
-//
-//    public static void main(String[] args) {
-//        ESBClient ec = new ESBClient();
-//        try {
-//            ec.deployCarbonApp("salesforce_gmail_car_1.0.0.car","/Users/maheeka/ESB_WORK/CLOUD/APP_CLOUD/salesforce_gmail_car_1.0.0.car");
-//        } catch (IntCloudException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
 }
