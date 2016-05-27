@@ -422,13 +422,9 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 
 
-
-
-
-
 SELECT * FROM AC_APP_TYPE;
 INSERT INTO AC_APP_TYPE (`id`, `name`, `description`) VALUES
-(5, 'car', 'Allows you to create composite application projects');
+(5, 'car', 'Allows you to create integration projects');
 
 SELECT * FROM AC_RUNTIME;
 
@@ -443,4 +439,17 @@ INSERT INTO `IntCloudDB`.`AC_APP_TYPE_RUNTIME`(`app_type_id`,`runtime_id`) VALUE
 ALTER TABLE `IntCloudDB`.`AC_VERSION` 
 CHANGE COLUMN `con_spec_cpu` `con_spec_cpu` VARCHAR(10) NULL ,
 CHANGE COLUMN `con_spec_memory` `con_spec_memory` VARCHAR(10) NULL ;
+
+ALTER TABLE `IntCloudDB`.`AC_VERSION` 
+DROP FOREIGN KEY `fk_AC_VERSION_ApplicationRuntime1`;
+ALTER TABLE `IntCloudDB`.`AC_VERSION` 
+CHANGE COLUMN `runtime_id` `runtime_id` INT(11) NULL ;
+
+ALTER TABLE `IntCloudDB`.`AC_APPLICATION` 
+ADD COLUMN `capp_name` VARCHAR(45) NULL AFTER `app_type_id`;
+
+DELETE FROM AC_APP_TYPE WHERE id<5;
+
+ALTER TABLE `IntCloudDB`.`AC_APPLICATION` 
+ADD COLUMN `param_configuration` VARCHAR(10000) NULL AFTER `capp_name`;
 

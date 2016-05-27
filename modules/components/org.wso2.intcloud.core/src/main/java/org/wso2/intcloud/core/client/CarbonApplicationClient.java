@@ -36,6 +36,8 @@ import java.rmi.RemoteException;
 
 public class CarbonApplicationClient {
 
+    private static Log log = LogFactory.getLog(CarbonApplicationClient.class);
+
     private static CarbonApplicationClient carbonApplicationClient = null;
 
     CarbonAppUploaderStub stub = null;
@@ -68,6 +70,8 @@ public class CarbonApplicationClient {
     }
 
     public void deployCarbonApp(String carbonApplicationName, String carbonApplicationPath) throws IntCloudException {
+
+        log.info("Deploying carbon application '" + carbonApplicationName + "' from '" + carbonApplicationPath + "'" );
 
         File file = new File(carbonApplicationPath);
 

@@ -18,9 +18,9 @@ package org.wso2.intcloud.core;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.context.CarbonContext;
 import org.wso2.intcloud.common.IntCloudException;
 import org.wso2.intcloud.core.dao.ApplicationDAO;
-import org.wso2.carbon.context.CarbonContext;
 import org.wso2.intcloud.core.dto.Application;
 import org.wso2.intcloud.core.dto.ApplicationRuntime;
 import org.wso2.intcloud.core.dto.ApplicationType;
@@ -709,4 +709,22 @@ public class ApplicationManager {
 			DBUtil.closeConnection(dbConnection);
 		}
 	}
+
+    public static void updateParamConfiguration(String versionHashId, String paramConfiguration)
+            throws IntCloudException {
+        ApplicationDAO applicationDAO = new ApplicationDAO();
+        Connection dbConnection = DBUtil.getDBConnection();
+
+        try {
+            applicationDAO.updateParamConfiguration(dbConnection, versionHashId, paramConfiguration);
+            dbConnection.commit();
+        } catch (SQLException e) {
+            String msg = "Error while committing transaction when adding runtime parameter configuration : " +
+                         paramConfiguration + " for version with hash id : " + versionHashId;
+            log.error(msg, e);
+            throw new IntCloudException(msg, e);
+        } finally {
+            DBUtil.closeConnection(dbConnection);
+        }
+    }
 }

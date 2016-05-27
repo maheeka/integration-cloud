@@ -35,7 +35,11 @@ import org.wso2.intcloud.core.dto.Version;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -72,7 +76,8 @@ public class ApplicationDAO {
             preparedStatement.setString(3, application.getDescription());
             preparedStatement.setInt(4, tenantId);
             preparedStatement.setString(5, application.getDefaultVersion());
-            preparedStatement.setString(6, application.getApplicationType());
+            preparedStatement.setString(6, application.getCarbonApplicationName());
+            preparedStatement.setString(7, application.getApplicationType());
 
             preparedStatement.execute();
 
@@ -741,6 +746,7 @@ public class ApplicationDAO {
                 application.setDefaultVersion(resultSet.getString(SQLQueryConstants.DEFAULT_VERSION));
                 application.setApplicationType(resultSet.getString(SQLQueryConstants.APPLICATION_TYPE_NAME));
                 application.setIcon(resultSet.getBlob(SQLQueryConstants.ICON));
+                application.setCarbonApplicationName(resultSet.getString(SQLQueryConstants.CARBON_APPLICATION_NAME));
                 application.setVersions(getAllVersionsOfApplication(dbConnection, applicationHashId));
 
             }
@@ -1594,5 +1600,34 @@ public class ApplicationDAO {
 			throw new IntCloudException(msg, e);
 		}
 	}
+
+    /**
+     * Update parameter configuration for given application.
+     *
+     * @param applicationHashId
+     * @return if sucessfully update the parameter configuration
+     * @throws IntCloudException
+     */
+    public boolean updateParamConfiguration(Connection dbConnection, String applicationHashId,
+                                            String paramConfiguration) throws IntCloudException {
+        PreparedStatement preparedStatement = null;
+        boolean updated = false;
+
+        try {
+            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.UPDATE_APPLICATION_PARAM_CONFIGURATION);
+            preparedStatement.setString(1, paramConfiguration);
+            preparedStatement.setString(2, applicationHashId);
+            updated = preparedStatement.execute();
+        } catch (SQLException e) {
+            String message =
+                    "Error while updating parameter configuration with application hash id : " + applicationHashId;
+            log.error(message, e);
+            throw new IntCloudException(message, e);
+        } finally {
+            DBUtil.closePreparedStatement(preparedStatement);
+        }
+
+        return updated;
+    }
 
 }

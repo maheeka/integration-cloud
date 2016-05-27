@@ -700,4 +700,6 @@ public class ApplicationManager {
 			DBUtil.closeConnection(dbConnection);
 		}
 	}
+
+
 }
