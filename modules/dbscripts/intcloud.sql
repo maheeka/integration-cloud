@@ -8,19 +8,15 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
 -- -----------------------------------------------------
--- Schema IntCloudDB
+-- Schema dbIntCloud
 -- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `dbIntCloud` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
+USE `dbIntCloud` ;
 
 -- -----------------------------------------------------
--- Schema IntCloudDB
+-- Table `dbIntCloud`.`AC_APP_TYPE`
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `IntCloudDB` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
-USE `IntCloudDB` ;
-
--- -----------------------------------------------------
--- Table `IntCloudDB`.`AC_APP_TYPE`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_APP_TYPE` (
+CREATE TABLE IF NOT EXISTS `dbIntCloud`.`AC_APP_TYPE` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
   `description` VARCHAR(1000) NULL,
@@ -30,7 +26,7 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Populate Data to `IntCloudDB`.`AC_APP_TYPE`
+-- Populate Data to `dbIntCloud`.`AC_APP_TYPE`
 -- -----------------------------------------------------
 INSERT INTO `AC_APP_TYPE` (`id`, `name`, `description`) VALUES
 (1, 'war', 'Allows you to create dynamic websites using Servlets and JSPs, instead of the static HTML webpages and JAX-RS/JAX-WS services.'),
@@ -40,9 +36,9 @@ INSERT INTO `AC_APP_TYPE` (`id`, `name`, `description`) VALUES
 
 
 -- -----------------------------------------------------
--- Table `IntCloudDB`.`AC_RUNTIME`
+-- Table `dbIntCloud`.`AC_RUNTIME`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_RUNTIME` (
+CREATE TABLE IF NOT EXISTS `dbIntCloud`.`AC_RUNTIME` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
   `repo_url` VARCHAR(250) NULL,
@@ -54,7 +50,7 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Populate Data to `IntCloudDB`.`ApplicationRuntime`
+-- Populate Data to `dbIntCloud`.`ApplicationRuntime`
 -- -----------------------------------------------------
 
 INSERT INTO `AC_RUNTIME` (`id`, `name`, `repo_url`, `image_name`, `tag`, `description`) VALUES
@@ -67,9 +63,9 @@ INSERT INTO `AC_RUNTIME` (`id`, `name`, `repo_url`, `image_name`, `tag`, `descri
 
 
 -- -----------------------------------------------------
--- Table `IntCloudDB`.`AC_APPLICATION`
+-- Table `dbIntCloud`.`AC_APPLICATION`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_APPLICATION` (
+CREATE TABLE IF NOT EXISTS `dbIntCloud`.`AC_APPLICATION` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
   `hash_id` VARCHAR(24) NULL,
@@ -81,16 +77,16 @@ CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_APPLICATION` (
   CONSTRAINT uk_Application_NAME_TID_REV UNIQUE(`name`, `tenant_id`),
   CONSTRAINT `fk_Application_ApplicationType1`
     FOREIGN KEY (`app_type_id`)
-    REFERENCES `IntCloudDB`.`AC_APP_TYPE` (`id`)
+    REFERENCES `dbIntCloud`.`AC_APP_TYPE` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `IntCloudDB`.`AC_DEPLOYMENT`
+-- Table `dbIntCloud`.`AC_DEPLOYMENT`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_DEPLOYMENT` (
+CREATE TABLE IF NOT EXISTS `dbIntCloud`.`AC_DEPLOYMENT` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NULL,
   `replicas` INT NULL,
@@ -100,9 +96,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `IntCloudDB`.`AC_VERSION`
+-- Table `dbIntCloud`.`AC_VERSION`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_VERSION` (
+CREATE TABLE IF NOT EXISTS `dbIntCloud`.`AC_VERSION` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(13) NULL,
   `hash_id` VARCHAR(24) NULL,
@@ -118,17 +114,17 @@ CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_VERSION` (
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_AC_VERSION_AC_APPLICATION1`
     FOREIGN KEY (`application_id`)
-    REFERENCES `IntCloudDB`.`AC_APPLICATION` (`id`)
+    REFERENCES `dbIntCloud`.`AC_APPLICATION` (`id`)
     ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_AC_VERSION_ApplicationRuntime1`
     FOREIGN KEY (`runtime_id`)
-    REFERENCES `IntCloudDB`.`AC_RUNTIME` (`id`)
+    REFERENCES `dbIntCloud`.`AC_RUNTIME` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_AC_VERSION_ApplicationDeployment1`
     FOREIGN KEY (`deployment_id`)
-    REFERENCES `IntCloudDB`.`AC_DEPLOYMENT` (`id`)
+    REFERENCES `dbIntCloud`.`AC_DEPLOYMENT` (`id`)
     ON DELETE SET NULL
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -139,9 +135,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `IntCloudDB`.`AC_TAG`
+-- Table `dbIntCloud`.`AC_TAG`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_TAG` (
+CREATE TABLE IF NOT EXISTS `dbIntCloud`.`AC_TAG` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
   `value` VARCHAR(100) NULL,
@@ -151,16 +147,16 @@ CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_TAG` (
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_AC_TAG_AC_VERSION1`
     FOREIGN KEY (`version_id`)
-    REFERENCES `IntCloudDB`.`AC_VERSION` (`id`)
+    REFERENCES `dbIntCloud`.`AC_VERSION` (`id`)
     ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `IntCloudDB`.`AC_RUNTIME_PROPERTY`
+-- Table `dbIntCloud`.`AC_RUNTIME_PROPERTY`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_RUNTIME_PROPERTY` (
+CREATE TABLE IF NOT EXISTS `dbIntCloud`.`AC_RUNTIME_PROPERTY` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
   `value` VARCHAR(100) NULL,
@@ -171,7 +167,7 @@ CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_RUNTIME_PROPERTY` (
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_AC_RUNTIME_PROPERTY_AC_VERSION1`
     FOREIGN KEY (`version_id`)
-    REFERENCES `IntCloudDB`.`AC_VERSION` (`id`)
+    REFERENCES `dbIntCloud`.`AC_VERSION` (`id`)
     ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -181,40 +177,40 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `IntCloudDB`.`AC_TENANT_APP_TYPE`
+-- Table `dbIntCloud`.`AC_TENANT_APP_TYPE`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_TENANT_APP_TYPE` (
+CREATE TABLE IF NOT EXISTS `dbIntCloud`.`AC_TENANT_APP_TYPE` (
   `tenant_id` INT NOT NULL,
   `app_type_id` INT NOT NULL,
   CONSTRAINT `fk_TenantAppType_ApplicationType1`
     FOREIGN KEY (`app_type_id`)
-    REFERENCES `IntCloudDB`.`AC_APP_TYPE` (`id`)
+    REFERENCES `dbIntCloud`.`AC_APP_TYPE` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `IntCloudDB`.`AC_APP_TYPE_RUNTIME`
+-- Table `dbIntCloud`.`AC_APP_TYPE_RUNTIME`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_APP_TYPE_RUNTIME` (
+CREATE TABLE IF NOT EXISTS `dbIntCloud`.`AC_APP_TYPE_RUNTIME` (
   `app_type_id` INT NOT NULL,
   `runtime_id` INT NOT NULL,
   CONSTRAINT `fk_ApplicationType_has_ApplicationRuntime_ApplicationType1`
     FOREIGN KEY (`app_type_id`)
-    REFERENCES `IntCloudDB`.`AC_APP_TYPE` (`id`)
+    REFERENCES `dbIntCloud`.`AC_APP_TYPE` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_ApplicationType_has_ApplicationRuntime_ApplicationRuntime1`
     FOREIGN KEY (`runtime_id`)
-    REFERENCES `IntCloudDB`.`AC_RUNTIME` (`id`)
+    REFERENCES `dbIntCloud`.`AC_RUNTIME` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Populate Data to `IntCloudDB`.`ApplicationTypeRuntime`
+-- Populate Data to `dbIntCloud`.`ApplicationTypeRuntime`
 -- -----------------------------------------------------
 INSERT INTO `AC_APP_TYPE_RUNTIME` (`app_type_id`, `runtime_id`) VALUES
 (1, 1),
@@ -224,23 +220,23 @@ INSERT INTO `AC_APP_TYPE_RUNTIME` (`app_type_id`, `runtime_id`) VALUES
 
 
 -- -----------------------------------------------------
--- Table `IntCloudDB`.`AC_TENANT_RUNTIME`
+-- Table `dbIntCloud`.`AC_TENANT_RUNTIME`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_TENANT_RUNTIME` (
+CREATE TABLE IF NOT EXISTS `dbIntCloud`.`AC_TENANT_RUNTIME` (
   `tenant_id` INT NOT NULL,
   `runtime_id` INT NOT NULL,
   CONSTRAINT `fk_TenanntRuntime_ApplicationRuntime1`
     FOREIGN KEY (`runtime_id`)
-    REFERENCES `IntCloudDB`.`AC_RUNTIME` (`id`)
+    REFERENCES `dbIntCloud`.`AC_RUNTIME` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `IntCloudDB`.`AC_EVENT`
+-- Table `dbIntCloud`.`AC_EVENT`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_EVENT` (
+CREATE TABLE IF NOT EXISTS `dbIntCloud`.`AC_EVENT` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
   `status` VARCHAR(45) NULL,
@@ -253,9 +249,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `IntCloudDB`.`AC_CONTAINER`
+-- Table `dbIntCloud`.`AC_CONTAINER`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_CONTAINER` (
+CREATE TABLE IF NOT EXISTS `dbIntCloud`.`AC_CONTAINER` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NULL,
   `version` VARCHAR(45) NULL,
@@ -264,16 +260,16 @@ CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_CONTAINER` (
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_ApplicationContainer_ApplicationDeployment1`
     FOREIGN KEY (`deployment_id`)
-    REFERENCES `IntCloudDB`.`AC_DEPLOYMENT` (`id`)
+    REFERENCES `dbIntCloud`.`AC_DEPLOYMENT` (`id`)
     ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `IntCloudDB`.`AC_CONTAINER_SERVICE_PROXY`
+-- Table `dbIntCloud`.`AC_CONTAINER_SERVICE_PROXY`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_CONTAINER_SERVICE_PROXY` (
+CREATE TABLE IF NOT EXISTS `dbIntCloud`.`AC_CONTAINER_SERVICE_PROXY` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NULL,
   `protocol` VARCHAR(20) NULL,
@@ -285,16 +281,16 @@ CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_CONTAINER_SERVICE_PROXY` (
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_ApplicationServiceProxy_ApplicationContainer1`
     FOREIGN KEY (`container_id`)
-    REFERENCES `IntCloudDB`.`AC_CONTAINER` (`id`)
+    REFERENCES `dbIntCloud`.`AC_CONTAINER` (`id`)
     ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `IntCloudDB`.`AC_APP_ICON`
+-- Table `dbIntCloud`.`AC_APP_ICON`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_APP_ICON` (
+CREATE TABLE IF NOT EXISTS `dbIntCloud`.`AC_APP_ICON` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `icon` MEDIUMBLOB DEFAULT NULL,
   `application_id` INT NOT NULL,
@@ -302,16 +298,16 @@ CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_APP_ICON` (
   UNIQUE INDEX `application_id_UNIQUE` (`application_id` ASC),
   CONSTRAINT `fk_AC_APPLICATION_ICON_AC_APPLICATION1`
     FOREIGN KEY (`application_id`)
-    REFERENCES `IntCloudDB`.`AC_APPLICATION` (`id`)
+    REFERENCES `dbIntCloud`.`AC_APPLICATION` (`id`)
     ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `IntCloudDB`.`AC_TRANSPORT`
+-- Table `dbIntCloud`.`AC_TRANSPORT`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_TRANSPORT` (
+CREATE TABLE IF NOT EXISTS `dbIntCloud`.`AC_TRANSPORT` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(20) NOT NULL,
   `port` INT NOT NULL,
@@ -323,19 +319,19 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `IntCloudDB`.`AC_RUNTIME_TRANSPORT`
+-- Table `dbIntCloud`.`AC_RUNTIME_TRANSPORT`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_RUNTIME_TRANSPORT` (
+CREATE TABLE IF NOT EXISTS `dbIntCloud`.`AC_RUNTIME_TRANSPORT` (
   `transport_id` INT NOT NULL,
   `runtime_id` INT NOT NULL,
   CONSTRAINT `fk_Service_id`
     FOREIGN KEY (`transport_id`)
-    REFERENCES `IntCloudDB`.`AC_TRANSPORT` (`id`)
+    REFERENCES `dbIntCloud`.`AC_TRANSPORT` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_ApplicationRuntime_id`
     FOREIGN KEY (`runtime_id`)
-    REFERENCES `IntCloudDB`.`AC_RUNTIME` (`id`)
+    REFERENCES `dbIntCloud`.`AC_RUNTIME` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -363,7 +359,7 @@ CREATE TABLE IF NOT EXISTS AC_RUNTIME_CONTAINER_SPECIFICATIONS (
   KEY CON_SPEC_ID (CON_SPEC_ID))
 ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_WHITE_LISTED_TENANTS` (
+CREATE TABLE IF NOT EXISTS `dbIntCloud`.`AC_WHITE_LISTED_TENANTS` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `tenant_id` INT NOT NULL,
   `max_app_count` INT NOT NULL,
@@ -371,7 +367,7 @@ CREATE TABLE IF NOT EXISTS `IntCloudDB`.`AC_WHITE_LISTED_TENANTS` (
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Populate Data to `IntCloudDB`.`ApplicationRuntime`
+-- Populate Data to `dbIntCloud`.`ApplicationRuntime`
 -- -----------------------------------------------------
 
 INSERT INTO `AC_TRANSPORT` (`id`, `name`, `port`, `protocol`, `service_prefix`, `description`) VALUES
@@ -383,7 +379,7 @@ INSERT INTO `AC_TRANSPORT` (`id`, `name`, `port`, `protocol`, `service_prefix`, 
 (6, 'https', 9443, 'TCP', 'hts', 'HTTPS servlet transport for carbon products');
 
 -- -----------------------------------------------------
--- Populate Data to `IntCloudDB`.`ApplicationRuntimeService`
+-- Populate Data to `dbIntCloud`.`ApplicationRuntimeService`
 -- -----------------------------------------------------
 INSERT INTO `AC_RUNTIME_TRANSPORT` (`transport_id`, `runtime_id`) VALUES
 (4, 1),
@@ -436,11 +432,11 @@ INSERT INTO `AC_RUNTIME` (`id`, `name`, `repo_url`, `image_name`, `tag`, `descri
 
 SELECT `AC_APP_TYPE_RUNTIME`.`app_type_id`,
     `AC_APP_TYPE_RUNTIME`.`runtime_id`
-FROM `IntCloudDB`.`AC_APP_TYPE_RUNTIME`;
+FROM `dbIntCloud`.`AC_APP_TYPE_RUNTIME`;
 
-INSERT INTO `IntCloudDB`.`AC_APP_TYPE_RUNTIME`(`app_type_id`,`runtime_id`) VALUES (5,6);
+INSERT INTO `dbIntCloud`.`AC_APP_TYPE_RUNTIME`(`app_type_id`,`runtime_id`) VALUES (5,6);
 
-ALTER TABLE `IntCloudDB`.`AC_VERSION` 
+ALTER TABLE `dbIntCloud`.`AC_VERSION` 
 CHANGE COLUMN `con_spec_cpu` `con_spec_cpu` VARCHAR(10) NULL ,
 CHANGE COLUMN `con_spec_memory` `con_spec_memory` VARCHAR(10) NULL ;
 
