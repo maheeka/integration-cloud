@@ -41,6 +41,7 @@ public class SQLQueryConstants {
     public static final String STATUS = "status";
     public static final String APPLICATION_TYPE_NAME = "app_type_name";
     public static final String CARBON_APPLICATION_NAME = "capp_name";
+    public static final String PARAM_CONFIGURATION = "param_configuration";
     public static final String BUILDABLE = "buildable" ;
     public static final String RUNTIME_NAME = "runtime_name";
     public static final String ICON = "icon";

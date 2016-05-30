@@ -106,7 +106,7 @@ public class SequenceTemplateClient {
                                 }
 
                                 if (paramNames.size() > 0) {
-                                    jsonConfiguration.append("\"param\":[");
+                                    jsonConfiguration.append("\"params\":[");
                                     for (int i = 0; i < paramNames.size(); i++) {
                                         jsonConfiguration.append("{\"param\":\"");
                                         jsonConfiguration.append(paramNames.get(i));

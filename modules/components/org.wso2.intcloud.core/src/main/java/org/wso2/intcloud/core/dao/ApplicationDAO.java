@@ -734,6 +734,7 @@ public class ApplicationDAO {
         try {
 
             preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.GET_APPLICATION_BY_HASH_ID);
+
             preparedStatement.setString(1, applicationHashId);
 
             resultSet = preparedStatement.executeQuery();
@@ -747,6 +748,7 @@ public class ApplicationDAO {
                 application.setApplicationType(resultSet.getString(SQLQueryConstants.APPLICATION_TYPE_NAME));
                 application.setIcon(resultSet.getBlob(SQLQueryConstants.ICON));
                 application.setCarbonApplicationName(resultSet.getString(SQLQueryConstants.CARBON_APPLICATION_NAME));
+                application.setParamConfiguration(resultSet.getString(SQLQueryConstants.PARAM_CONFIGURATION));
                 application.setVersions(getAllVersionsOfApplication(dbConnection, applicationHashId));
 
             }
