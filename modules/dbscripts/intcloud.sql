@@ -3,7 +3,7 @@
 -- Model: New Model    Version: 1.0
 -- MySQL Workbench Forward Engineering
 
-DROP DATABASE IntCloudDB;
+DROP DATABASE IF EXISTS dbIntCloud;
 
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
@@ -438,15 +438,15 @@ ALTER TABLE `dbIntCloud`.`AC_VERSION`
 CHANGE COLUMN `con_spec_cpu` `con_spec_cpu` VARCHAR(10) NULL ,
 CHANGE COLUMN `con_spec_memory` `con_spec_memory` VARCHAR(10) NULL ;
 
-ALTER TABLE `IntCloudDB`.`AC_VERSION` 
+ALTER TABLE `dbIntCloud`.`AC_VERSION` 
 DROP FOREIGN KEY `fk_AC_VERSION_ApplicationRuntime1`;
-ALTER TABLE `IntCloudDB`.`AC_VERSION` 
+ALTER TABLE `dbIntCloud`.`AC_VERSION` 
 CHANGE COLUMN `runtime_id` `runtime_id` INT(11) NULL ;
 
-ALTER TABLE `IntCloudDB`.`AC_APPLICATION` 
+ALTER TABLE `dbIntCloud`.`AC_APPLICATION` 
 ADD COLUMN `capp_name` VARCHAR(45) NULL AFTER `app_type_id`;
 
-ALTER TABLE `IntCloudDB`.`AC_APPLICATION` 
+ALTER TABLE `dbIntCloud`.`AC_APPLICATION` 
 ADD COLUMN `param_configuration` VARCHAR(10000) NULL AFTER `capp_name`;
 
 DELETE FROM `AC_APP_TYPE` WHERE id!=5;
