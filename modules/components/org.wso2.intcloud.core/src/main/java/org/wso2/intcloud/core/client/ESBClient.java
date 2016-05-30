@@ -42,7 +42,7 @@ public class ESBClient {
         CarbonApplicationClient.getInstance().deployCarbonApp(carbonApplicationName, carbonApplicationPath);
     }
 
-    public String[] getAllSequenceTemplates() throws IntCloudException {
-        return SequenceTemplateClient.getInstance().getAllSequenceTemplates();
+    public String getIntegrationParamConfiguration(String carbonApplicationName) throws IntCloudException {
+        return SequenceTemplateClient.getInstance().getSequenceTemplate(carbonApplicationName);
     }
 }

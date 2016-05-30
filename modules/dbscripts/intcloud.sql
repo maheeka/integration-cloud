@@ -3,6 +3,8 @@
 -- Model: New Model    Version: 1.0
 -- MySQL Workbench Forward Engineering
 
+DROP DATABASE IntCloudDB;
+
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
@@ -418,13 +420,9 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 
 
-
-
-
-
 SELECT * FROM AC_APP_TYPE;
 INSERT INTO AC_APP_TYPE (`id`, `name`, `description`) VALUES
-(5, 'car', 'Allows you to create composite application projects');
+(5, 'car', 'Allows you to create integration projects');
 
 SELECT * FROM AC_RUNTIME;
 
@@ -440,3 +438,17 @@ ALTER TABLE `dbIntCloud`.`AC_VERSION`
 CHANGE COLUMN `con_spec_cpu` `con_spec_cpu` VARCHAR(10) NULL ,
 CHANGE COLUMN `con_spec_memory` `con_spec_memory` VARCHAR(10) NULL ;
 
+ALTER TABLE `IntCloudDB`.`AC_VERSION` 
+DROP FOREIGN KEY `fk_AC_VERSION_ApplicationRuntime1`;
+ALTER TABLE `IntCloudDB`.`AC_VERSION` 
+CHANGE COLUMN `runtime_id` `runtime_id` INT(11) NULL ;
+
+ALTER TABLE `IntCloudDB`.`AC_APPLICATION` 
+ADD COLUMN `capp_name` VARCHAR(45) NULL AFTER `app_type_id`;
+
+ALTER TABLE `IntCloudDB`.`AC_APPLICATION` 
+ADD COLUMN `param_configuration` VARCHAR(10000) NULL AFTER `capp_name`;
+
+DELETE FROM `AC_APP_TYPE` WHERE id!=5;
+
+DELETE FROM `AC_APP_TYPE_RUNTIME` WHERE app_type_id!=5;

@@ -40,6 +40,8 @@ public class SQLQueryConstants {
     public static final String RUNTIME_ID = "runtime_id";
     public static final String STATUS = "status";
     public static final String APPLICATION_TYPE_NAME = "app_type_name";
+    public static final String CARBON_APPLICATION_NAME = "capp_name";
+    public static final String PARAM_CONFIGURATION = "param_configuration";
     public static final String BUILDABLE = "buildable" ;
     public static final String RUNTIME_NAME = "runtime_name";
     public static final String ICON = "icon";
@@ -63,8 +65,8 @@ public class SQLQueryConstants {
     /*Insert Queries*/
 
     public static final String ADD_APPLICATION =
-            "INSERT INTO AC_APPLICATION (name, hash_id, description, tenant_id, default_version, app_type_id) values " +
-            "(?, ?, ?, ?, ?, (SELECT id FROM AC_APP_TYPE WHERE name=?))";
+            "INSERT INTO AC_APPLICATION (name, hash_id, description, tenant_id, default_version, capp_name, app_type_id) values " +
+            "(?, ?, ?, ?, ?, ?, (SELECT id FROM AC_APP_TYPE WHERE name=?))";
 
     public static final String ADD_VERSION =
             "INSERT INTO AC_VERSION (name, hash_id, application_id, runtime_id, tenant_id, con_spec_cpu, con_spec_memory) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -217,7 +219,8 @@ public class SQLQueryConstants {
 	public static final String  UPDATE_WHITE_LIST_APPLICATION_VERSION = "UPDATE AC_VERSION " +
 	                                                                    "SET is_white_listed=? WHERE hash_id=?";
 
-
+    public static final String  UPDATE_APPLICATION_PARAM_CONFIGURATION = "UPDATE AC_APPLICATION " +
+                                                                     "SET param_configuration=? WHERE hash_id=?";
 
     /*Delete Queries*/
 
