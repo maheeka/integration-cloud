@@ -88,6 +88,15 @@ public class SequenceTemplateClient {
                         if (artifactContainerName.equalsIgnoreCase(carbonApplicationName)) {
                             OMElement seqOMElement = sequenceTemplateClient.stub.getTemplate(template.getName());
 
+                            log.debug("Found integration template : " + seqOMElement);
+
+                            AXIOMXPath templateNameXpath = new AXIOMXPath("//ns:template/@name");
+                            templateNameXpath.addNamespace("ns", "http://ws.apache.org/ns/synapse");
+
+                            OMAttribute templateName = (OMAttribute) templateNameXpath.selectSingleNode(seqOMElement);
+
+                            jsonConfiguration.append("\"template_name\" : \"" + templateName.getAttributeValue() + "\"," );
+
                             AXIOMXPath parametersXpath = new AXIOMXPath("//ns:parameter/@name");
                             parametersXpath.addNamespace("ns", "http://ws.apache.org/ns/synapse");
 

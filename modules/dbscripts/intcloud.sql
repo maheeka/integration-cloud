@@ -449,6 +449,7 @@ ADD COLUMN `capp_name` VARCHAR(45) NULL AFTER `app_type_id`;
 ALTER TABLE `dbIntCloud`.`AC_APPLICATION` 
 ADD COLUMN `param_configuration` VARCHAR(10000) NULL AFTER `capp_name`;
 
+DELETE FROM `AC_APP_TYPE_RUNTIME` WHERE app_type_id!=5;
+
 DELETE FROM `AC_APP_TYPE` WHERE id!=5;
 
-DELETE FROM `AC_APP_TYPE_RUNTIME` WHERE app_type_id!=5;
