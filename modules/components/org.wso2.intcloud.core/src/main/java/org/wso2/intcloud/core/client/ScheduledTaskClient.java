@@ -1,5 +1,6 @@
 package org.wso2.intcloud.core.client;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.AXIOMUtil;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.Options;
@@ -14,8 +15,11 @@ import org.wso2.carbon.task.stub.TaskManagementException;
 import org.wso2.intcloud.common.IntCloudException;
 import org.wso2.intcloud.common.util.IntCloudUtil;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
+import java.rmi.RemoteException;
+import java.util.UUID;
 
 public class ScheduledTaskClient {
 
@@ -53,7 +57,7 @@ public class ScheduledTaskClient {
         return scheduledTaskClient;
     }
 
-    public void addTask(String applicationName, JSONObject paramConfigurationJSON)
+    public OMElement addTask(String applicationName, JSONObject paramConfigurationJSON)
             throws XMLStreamException, IOException, TaskManagementException {
 
         Object template_name = paramConfigurationJSON.get("template_name");
@@ -103,6 +107,29 @@ public class ScheduledTaskClient {
         log.info("Deploying task configuration : " + taskConfigurationStr);
 
         stub.addTaskDescription(AXIOMUtil.stringToOM(taskConfigurationStr));
+
+        return AXIOMUtil.stringToOM(taskConfigurationStr);
     }
 
+    public void addTestTask(String applicationName, JSONObject paramConfigurationJSON)
+            throws TaskManagementException, XMLStreamException, IOException, InterruptedException {
+
+        String randomApplicationName = applicationName + UUID.randomUUID();
+
+        paramConfigurationJSON.put("count", "1");
+        paramConfigurationJSON.put("interval", "1");
+
+        OMElement task = addTask(randomApplicationName, paramConfigurationJSON);
+
+        String taskName = task.getAttributeValue(new QName("name"));
+        String taskGroup = task.getAttributeValue(new QName("group"));
+
+        deleteTask(taskName, taskGroup);
+
+    }
+
+    public void deleteTask(String name, String group) throws TaskManagementException, RemoteException {
+        log.info("Deleting task " + name);
+        stub.deleteTaskDescription(name, group);
+    }
 }

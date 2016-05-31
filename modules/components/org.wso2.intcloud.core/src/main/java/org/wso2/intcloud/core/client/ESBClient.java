@@ -55,4 +55,9 @@ public class ESBClient {
             throws IntCloudException, TaskManagementException, XMLStreamException, IOException {
         ScheduledTaskClient.getInstance().addTask(applicationName, new JSONObject(paramConfiguration));
     }
+
+    public void deployTestScheduleTask(String applicationName, String paramConfiguration)
+            throws IntCloudException, TaskManagementException, XMLStreamException, IOException, InterruptedException {
+        ScheduledTaskClient.getInstance().addTestTask(applicationName, new JSONObject(paramConfiguration));
+    }
 }
