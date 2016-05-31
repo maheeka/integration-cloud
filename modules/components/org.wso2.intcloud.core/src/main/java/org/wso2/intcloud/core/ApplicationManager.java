@@ -727,4 +727,22 @@ public class ApplicationManager {
             DBUtil.closeConnection(dbConnection);
         }
     }
+
+    public static void updateTaskConfiguration(String versionHashId, String taskConfiguration)
+            throws IntCloudException {
+        ApplicationDAO applicationDAO = new ApplicationDAO();
+        Connection dbConnection = DBUtil.getDBConnection();
+
+        try {
+            applicationDAO.updateTaskConfiguration(dbConnection, versionHashId, taskConfiguration);
+            dbConnection.commit();
+        } catch (SQLException e) {
+            String msg = "Error while committing transaction when adding task configuration : " +
+                         taskConfiguration + " for version with hash id : " + versionHashId;
+            log.error(msg, e);
+            throw new IntCloudException(msg, e);
+        } finally {
+            DBUtil.closeConnection(dbConnection);
+        }
+    }
 }

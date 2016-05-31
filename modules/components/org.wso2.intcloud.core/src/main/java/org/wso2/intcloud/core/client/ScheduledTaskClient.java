@@ -132,4 +132,14 @@ public class ScheduledTaskClient {
         log.info("Deleting task " + name);
         stub.deleteTaskDescription(name, group);
     }
+
+    public void stopTask(String applicationName, String taskConfiguration)
+            throws XMLStreamException, TaskManagementException, RemoteException {
+        OMElement task = AXIOMUtil.stringToOM(taskConfiguration);
+
+        String taskName = task.getAttributeValue(new QName("name"));
+        String taskGroup = task.getAttributeValue(new QName("group"));
+
+        deleteTask(taskName, taskGroup);
+    }
 }

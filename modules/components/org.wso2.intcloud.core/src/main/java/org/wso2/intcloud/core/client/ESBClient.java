@@ -17,6 +17,7 @@
 
 package org.wso2.intcloud.core.client;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -51,13 +52,20 @@ public class ESBClient {
         return SequenceTemplateClient.getInstance().getSequenceTemplate(carbonApplicationName);
     }
 
-    public void deployScheduleTask(String applicationName, String paramConfiguration)
+    public String deployScheduleTask(String applicationName, String paramConfiguration)
             throws IntCloudException, TaskManagementException, XMLStreamException, IOException {
-        ScheduledTaskClient.getInstance().addTask(applicationName, new JSONObject(paramConfiguration));
+        OMElement taskConfiguration =
+                ScheduledTaskClient.getInstance().addTask(applicationName, new JSONObject(paramConfiguration));
+        return taskConfiguration.toString();
     }
 
     public void deployTestScheduleTask(String applicationName, String paramConfiguration)
             throws IntCloudException, TaskManagementException, XMLStreamException, IOException, InterruptedException {
         ScheduledTaskClient.getInstance().addTestTask(applicationName, new JSONObject(paramConfiguration));
+    }
+
+    public void stopScheduleTask(String applicationName, String taskConfiguration)
+            throws IntCloudException, TaskManagementException, XMLStreamException, IOException, InterruptedException {
+        ScheduledTaskClient.getInstance().stopTask(applicationName, taskConfiguration);
     }
 }

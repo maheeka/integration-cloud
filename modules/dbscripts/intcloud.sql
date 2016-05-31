@@ -453,3 +453,6 @@ DELETE FROM `AC_APP_TYPE_RUNTIME` WHERE app_type_id!=5;
 
 DELETE FROM `AC_APP_TYPE` WHERE id!=5;
 
+ALTER TABLE `dbIntCloud`.`AC_APPLICATION` 
+ADD COLUMN `task_configuration` VARCHAR(10000) NULL AFTER `param_configuration`;
+

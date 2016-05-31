@@ -749,6 +749,7 @@ public class ApplicationDAO {
                 application.setIcon(resultSet.getBlob(SQLQueryConstants.ICON));
                 application.setCarbonApplicationName(resultSet.getString(SQLQueryConstants.CARBON_APPLICATION_NAME));
                 application.setParamConfiguration(resultSet.getString(SQLQueryConstants.PARAM_CONFIGURATION));
+                application.setTaskConfiguration(resultSet.getString(SQLQueryConstants.TASK_CONFIGURATION));
                 application.setVersions(getAllVersionsOfApplication(dbConnection, applicationHashId));
 
             }
@@ -1632,4 +1633,25 @@ public class ApplicationDAO {
         return updated;
     }
 
+    public boolean updateTaskConfiguration(Connection dbConnection, String applicationHashId, String taskConfiguration)
+            throws IntCloudException {
+        PreparedStatement preparedStatement = null;
+        boolean updated = false;
+
+        try {
+            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.UPDATE_APPLICATION_TASK_CONFIGURATION);
+            preparedStatement.setString(1, taskConfiguration);
+            preparedStatement.setString(2, applicationHashId);
+            updated = preparedStatement.execute();
+        } catch (SQLException e) {
+            String message =
+                    "Error while updating parameter configuration with application hash id : " + applicationHashId;
+            log.error(message, e);
+            throw new IntCloudException(message, e);
+        } finally {
+            DBUtil.closePreparedStatement(preparedStatement);
+        }
+
+        return updated;
+    }
 }

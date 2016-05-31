@@ -31,6 +31,7 @@ public class Application {
     private Blob icon;
     private List<Version> versions;
     private String paramConfiguration;
+    private String taskConfiguration;
 
 
     public Application(){
@@ -107,5 +108,13 @@ public class Application {
 
     public void setParamConfiguration(String paramConfiguration) {
         this.paramConfiguration = paramConfiguration;
+    }
+
+    public String getTaskConfiguration() {
+        return taskConfiguration;
+    }
+
+    public void setTaskConfiguration(String taskConfiguration) {
+        this.taskConfiguration = taskConfiguration;
     }
 }

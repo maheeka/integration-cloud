@@ -42,6 +42,7 @@ public class SQLQueryConstants {
     public static final String APPLICATION_TYPE_NAME = "app_type_name";
     public static final String CARBON_APPLICATION_NAME = "capp_name";
     public static final String PARAM_CONFIGURATION = "param_configuration";
+    public static final String TASK_CONFIGURATION = "task_configuration";
     public static final String BUILDABLE = "buildable" ;
     public static final String RUNTIME_NAME = "runtime_name";
     public static final String ICON = "icon";
@@ -221,6 +222,9 @@ public class SQLQueryConstants {
 
     public static final String  UPDATE_APPLICATION_PARAM_CONFIGURATION = "UPDATE AC_APPLICATION " +
                                                                      "SET param_configuration=? WHERE hash_id=?";
+
+    public static final String  UPDATE_APPLICATION_TASK_CONFIGURATION = "UPDATE AC_APPLICATION " +
+                                                                         "SET task_configuration=? WHERE hash_id=?";
 
     /*Delete Queries*/
 
