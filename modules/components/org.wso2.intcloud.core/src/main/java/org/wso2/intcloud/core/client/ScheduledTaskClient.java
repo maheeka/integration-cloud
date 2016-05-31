@@ -53,10 +53,10 @@ public class ScheduledTaskClient {
         return scheduledTaskClient;
     }
 
-    public void addTask(String applicationName, String interval, String count, JSONObject paramConfigsJSON)
+    public void addTask(String applicationName, JSONObject paramConfigurationJSON)
             throws XMLStreamException, IOException, TaskManagementException {
 
-        Object template_name = paramConfigsJSON.get("template_name");
+        Object template_name = paramConfigurationJSON.get("template_name");
 
         StringBuilder taskConfiguration = new StringBuilder();
         taskConfiguration.append("<task:task xmlns=\"http://ws.apache.org/ns/synapse\" xmlns:task=\"http://www.wso2" +
@@ -69,17 +69,15 @@ public class ScheduledTaskClient {
                                  "        group=\"synapse.simple.quartz\">");
 
         taskConfiguration.append("<task:trigger count=\"");
-        taskConfiguration.append(count);
-        //        taskConfiguration.append(paramConfigsJSON.getJSONObject("schedule").get("count"));
+        taskConfiguration.append(paramConfigurationJSON.getJSONObject("schedule").get("count"));
         taskConfiguration.append("\" interval=\"");
-        taskConfiguration.append(interval);
-        //        taskConfiguration.append(paramConfigsJSON.getJSONObject("schedule").get("interval"));
+        taskConfiguration.append(paramConfigurationJSON.getJSONObject("schedule").get("interval"));
         taskConfiguration.append("\" />");
 
         taskConfiguration.append("<task:property xmlns:task=\"http://www.wso2.org/products/wso2commons/tasks\"\n" +
                                  "        name=\"templateParams\"><params>");
 
-        JSONArray paramsArray = paramConfigsJSON.getJSONArray("params");
+        JSONArray paramsArray = paramConfigurationJSON.getJSONArray("params");
 
         for (int i = 0; i < paramsArray.length(); i++) {
             JSONObject paramJSON = paramsArray.getJSONObject(i);

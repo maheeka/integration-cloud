@@ -51,8 +51,8 @@ public class ESBClient {
         return SequenceTemplateClient.getInstance().getSequenceTemplate(carbonApplicationName);
     }
 
-    public void deployScheduleTask(String applicationName, String interval, String count, String paramConfigJSON)
+    public void deployScheduleTask(String applicationName, String paramConfiguration)
             throws IntCloudException, TaskManagementException, XMLStreamException, IOException {
-        ScheduledTaskClient.getInstance().addTask(applicationName, interval, count, new JSONObject(paramConfigJSON));
+        ScheduledTaskClient.getInstance().addTask(applicationName, new JSONObject(paramConfiguration));
     }
 }
