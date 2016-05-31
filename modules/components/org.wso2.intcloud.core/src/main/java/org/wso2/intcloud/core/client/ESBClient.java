@@ -19,8 +19,13 @@ package org.wso2.intcloud.core.client;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONObject;
+import org.wso2.carbon.task.stub.TaskManagementException;
 import org.wso2.intcloud.common.IntCloudException;
 import org.wso2.intcloud.common.util.IntCloudUtil;
+
+import javax.xml.stream.XMLStreamException;
+import java.io.IOException;
 
 public class ESBClient {
 
@@ -44,5 +49,10 @@ public class ESBClient {
 
     public String getIntegrationParamConfiguration(String carbonApplicationName) throws IntCloudException {
         return SequenceTemplateClient.getInstance().getSequenceTemplate(carbonApplicationName);
+    }
+
+    public void deployScheduleTask(String applicationName, String interval, String count, String paramConfigJSON)
+            throws IntCloudException, TaskManagementException, XMLStreamException, IOException {
+        ScheduledTaskClient.getInstance().addTask(applicationName, interval, count, new JSONObject(paramConfigJSON));
     }
 }
