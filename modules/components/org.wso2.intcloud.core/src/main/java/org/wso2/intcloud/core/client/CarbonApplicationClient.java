@@ -24,6 +24,7 @@ import org.apache.axis2.transport.http.HttpTransportProperties;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.application.mgt.stub.ApplicationAdminExceptionException;
 import org.wso2.carbon.application.mgt.stub.ApplicationAdminStub;
 import org.wso2.carbon.application.mgt.stub.upload.CarbonAppUploaderStub;
 import org.wso2.carbon.application.mgt.stub.upload.types.carbon.UploadedFileItem;
@@ -34,6 +35,8 @@ import javax.activation.DataHandler;
 import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.Calendar;
 
 public class CarbonApplicationClient {
 
@@ -43,6 +46,8 @@ public class CarbonApplicationClient {
 
     CarbonAppUploaderStub cAppUploaderstub = null;
     ApplicationAdminStub appAdminStub = null;
+
+    int MAX_TIME = 200000;
 
     private CarbonApplicationClient() throws IntCloudException {
         try {
@@ -66,13 +71,14 @@ public class CarbonApplicationClient {
         authenticatorAppAdmin.setUsername(IntCloudUtil.getPropertyValue("ESBServerUserName"));
         authenticatorAppAdmin.setPassword(IntCloudUtil.getPropertyValue("ESBServerPassword"));
         authenticatorAppAdmin.setPreemptiveAuthentication(true);
-        client_optionsAppAdmin.setProperty(org.apache.axis2.transport.http.HTTPConstants.AUTHENTICATE, authenticatorAppAdmin);
+        client_optionsAppAdmin
+                .setProperty(org.apache.axis2.transport.http.HTTPConstants.AUTHENTICATE, authenticatorAppAdmin);
         clientAppAdmin.setOptions(client_optionsAppAdmin);
     }
 
     public static CarbonApplicationClient getInstance() throws IntCloudException {
         if (carbonApplicationClient == null) {
-            synchronized (CarbonApplicationClient.class){
+            synchronized (CarbonApplicationClient.class) {
                 if (carbonApplicationClient == null) {
                     carbonApplicationClient = new CarbonApplicationClient();
                 }
@@ -83,7 +89,7 @@ public class CarbonApplicationClient {
 
     public void deployCarbonApp(String carbonApplicationName, String carbonApplicationPath) throws IntCloudException {
 
-        log.info("Deploying carbon application '" + carbonApplicationName + "' from '" + carbonApplicationPath + "'" );
+        log.info("Deploying carbon application '" + carbonApplicationName + "' from '" + carbonApplicationPath + "'");
 
         File file = new File(carbonApplicationPath);
 
@@ -108,10 +114,44 @@ public class CarbonApplicationClient {
         } catch (RemoteException e) {
             throw new IntCloudException(e.getMessage(), e);
         }
+
+        String cAppName = carbonApplicationName.substring(0, carbonApplicationName.length() - 4);
+
+        log.info("Waiting " + MAX_TIME + " milliseconds for carbon application deployment : " + cAppName);
+        boolean isCarFileDeployed = false;
+        Calendar startTime = Calendar.getInstance();
+        long time;
+        while ((time = (Calendar.getInstance().getTimeInMillis() - startTime.getTimeInMillis())) < MAX_TIME) {
+            String[] applicationList = new String[0];
+            try {
+                applicationList = appAdminStub.listAllApplications();
+            } catch (RemoteException | ApplicationAdminExceptionException e) {
+                throw new IntCloudException("Error getting deployed application list from server", e);
+            }
+            if (applicationList != null) {
+                if (Arrays.asList(applicationList).contains(cAppName)) {
+                    log.info("car file deployed in " + time + " mills");
+                    isCarFileDeployed = true;
+                    break;
+                }
+            }
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                //ignore
+            }
+
+        }
+
+        if (isCarFileDeployed) {
+            log.info("Carbon application deployed successfully");
+        } else {
+            log.warn("Carbon application deployment failed");
+        }
     }
 
     public void unDeployCarbonApp(String carbonApplicationName) {
-        String cAppName = carbonApplicationName.substring(0,carbonApplicationName.length()-4);
+        String cAppName = carbonApplicationName.substring(0, carbonApplicationName.length() - 4);
         log.info("Undeploying carbon application : " + cAppName);
         try {
             appAdminStub.deleteApplication(cAppName);

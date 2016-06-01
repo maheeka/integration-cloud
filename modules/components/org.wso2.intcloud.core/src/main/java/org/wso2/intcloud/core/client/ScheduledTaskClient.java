@@ -17,7 +17,6 @@ import org.wso2.intcloud.common.util.IntCloudUtil;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.UUID;
 
@@ -57,8 +56,7 @@ public class ScheduledTaskClient {
         return scheduledTaskClient;
     }
 
-    public OMElement addTask(String applicationName, JSONObject paramConfigurationJSON)
-            throws XMLStreamException, IOException, TaskManagementException {
+    public OMElement addTask(String applicationName, JSONObject paramConfigurationJSON) throws IntCloudException {
 
         Object template_name = paramConfigurationJSON.get("template_name");
 
@@ -106,13 +104,18 @@ public class ScheduledTaskClient {
 
         log.info("Deploying task configuration : " + taskConfigurationStr);
 
-        stub.addTaskDescription(AXIOMUtil.stringToOM(taskConfigurationStr));
+        OMElement taskOM = null;
+        try {
+            taskOM = AXIOMUtil.stringToOM(taskConfigurationStr);
+            stub.addTaskDescription(taskOM);
+        } catch (XMLStreamException | RemoteException | TaskManagementException e) {
+            throw new IntCloudException("Error adding task for " + applicationName, e);
+        }
 
-        return AXIOMUtil.stringToOM(taskConfigurationStr);
+        return taskOM;
     }
 
-    public void addTestTask(String applicationName, JSONObject paramConfigurationJSON)
-            throws TaskManagementException, XMLStreamException, IOException, InterruptedException {
+    public void addTestTask(String applicationName, JSONObject paramConfigurationJSON) throws IntCloudException {
 
         String randomApplicationName = applicationName + UUID.randomUUID();
 
@@ -128,14 +131,22 @@ public class ScheduledTaskClient {
 
     }
 
-    public void deleteTask(String name, String group) throws TaskManagementException, RemoteException {
+    public void deleteTask(String name, String group) throws IntCloudException {
         log.info("Deleting task " + name);
-        stub.deleteTaskDescription(name, group);
+        try {
+            stub.deleteTaskDescription(name, group);
+        } catch (RemoteException | TaskManagementException e) {
+            throw new IntCloudException("Error deleting integration task " + name, e);
+        }
     }
 
-    public void stopTask(String applicationName, String taskConfiguration)
-            throws XMLStreamException, TaskManagementException, RemoteException {
-        OMElement task = AXIOMUtil.stringToOM(taskConfiguration);
+    public void stopTask(String applicationName, String taskConfiguration) throws IntCloudException {
+        OMElement task = null;
+        try {
+            task = AXIOMUtil.stringToOM(taskConfiguration);
+        } catch (XMLStreamException e) {
+            throw new IntCloudException("Error stopping integration task for " + applicationName, e);
+        }
 
         String taskName = task.getAttributeValue(new QName("name"));
         String taskGroup = task.getAttributeValue(new QName("group"));

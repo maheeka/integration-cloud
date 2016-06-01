@@ -56,15 +56,13 @@ public class ESBClient {
         return SequenceTemplateClient.getInstance().getSequenceTemplate(carbonApplicationName);
     }
 
-    public String deployScheduleTask(String applicationName, String paramConfiguration)
-            throws IntCloudException, TaskManagementException, XMLStreamException, IOException {
+    public String deployScheduleTask(String applicationName, String paramConfiguration) throws IntCloudException {
         OMElement taskConfiguration =
                 ScheduledTaskClient.getInstance().addTask(applicationName, new JSONObject(paramConfiguration));
         return taskConfiguration.toString();
     }
 
-    public void deployTestScheduleTask(String applicationName, String paramConfiguration)
-            throws IntCloudException, TaskManagementException, XMLStreamException, IOException, InterruptedException {
+    public void deployTestScheduleTask(String applicationName, String paramConfiguration) throws IntCloudException {
         ScheduledTaskClient.getInstance().addTestTask(applicationName, new JSONObject(paramConfiguration));
     }
 
