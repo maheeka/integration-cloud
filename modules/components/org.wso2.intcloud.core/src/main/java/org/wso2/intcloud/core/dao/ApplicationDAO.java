@@ -371,7 +371,8 @@ public class ApplicationDAO {
 
         try {
 
-            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.ADD_CONTAINER_SERVICE_PROXY, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.ADD_CONTAINER_SERVICE_PROXY,
+                                                              Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, containerServiceProxy.getServiceName());
             preparedStatement.setString(2, containerServiceProxy.getServiceProtocol());
             preparedStatement.setInt(3, containerServiceProxy.getServicePort());
@@ -601,6 +602,35 @@ public class ApplicationDAO {
         return hashIdList;
     }
 
+    public String getCarbonApplicationNameOfApplication(Connection dbConnection, String applicationHashId)
+            throws IntCloudException {
+
+        PreparedStatement preparedStatement = null;
+        String cAppName = null;
+        ResultSet resultSet = null;
+
+        try {
+            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.GET_CARBON_APPLICATION_NAME_OF_APPLICATION);
+            preparedStatement.setString(1, applicationHashId);
+
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                cAppName = (resultSet.getString(SQLQueryConstants.CARBON_APPLICATION_NAME));
+                return cAppName;
+            }
+
+        } catch (SQLException e) {
+            String msg = "Error while getting the carbon application name of application : " + applicationHashId;
+            log.error(msg, e);
+            throw new IntCloudException(msg, e);
+        } finally {
+            DBUtil.closeResultSet(resultSet);
+            DBUtil.closePreparedStatement(preparedStatement);
+        }
+
+        return cAppName;
+    }
 
     public boolean isSingleVersion(Connection dbConnection, String versionHashId) throws IntCloudException {
 

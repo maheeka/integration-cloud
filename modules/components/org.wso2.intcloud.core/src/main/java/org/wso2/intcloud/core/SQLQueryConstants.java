@@ -112,6 +112,9 @@ public class SQLQueryConstants {
     public static final String GET_VERSION_HASH_IDS_OF_APPLICATION =
             "SELECT hash_id FROM AC_VERSION WHERE application_id = (SELECT id FROM AC_APPLICATION WHERE hash_id=?)";
 
+    public static final String GET_CARBON_APPLICATION_NAME_OF_APPLICATION =
+            "SELECT capp_name FROM AC_APPLICATION WHERE hash_id=?";
+
     public static final String GET_VERSION_HASH_IDS_OF_APPLICATION_BY_VERSION_HASH_ID =
             "SELECT hash_id FROM AC_VERSION WHERE application_id = (SELECT application_id FROM AC_VERSION WHERE hash_id=?)";
 

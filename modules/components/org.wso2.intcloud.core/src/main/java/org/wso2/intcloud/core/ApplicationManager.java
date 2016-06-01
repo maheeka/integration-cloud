@@ -204,6 +204,18 @@ public class ApplicationManager {
         }
     }
 
+    public static String getCarbonApplicationNameOfApplication(String applicationHashId) throws IntCloudException {
+
+        ApplicationDAO applicationDAO = new ApplicationDAO();
+        Connection dbConnection = DBUtil.getDBConnection();
+
+        try {
+            return applicationDAO.getCarbonApplicationNameOfApplication(dbConnection, applicationHashId);
+        } finally {
+            DBUtil.closeConnection(dbConnection);
+        }
+    }
+
     public static boolean isSingleVersion(String versionHashId) throws IntCloudException {
         ApplicationDAO applicationDAO = new ApplicationDAO();
         Connection dbConnection = DBUtil.getDBConnection();

@@ -24,6 +24,7 @@ import org.apache.axis2.transport.http.HttpTransportProperties;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.application.mgt.stub.ApplicationAdminStub;
 import org.wso2.carbon.application.mgt.stub.upload.CarbonAppUploaderStub;
 import org.wso2.carbon.application.mgt.stub.upload.types.carbon.UploadedFileItem;
 import org.wso2.intcloud.common.IntCloudException;
@@ -40,22 +41,33 @@ public class CarbonApplicationClient {
 
     private static CarbonApplicationClient carbonApplicationClient = null;
 
-    CarbonAppUploaderStub stub = null;
+    CarbonAppUploaderStub cAppUploaderstub = null;
+    ApplicationAdminStub appAdminStub = null;
 
     private CarbonApplicationClient() throws IntCloudException {
         try {
-            stub = new CarbonAppUploaderStub(IntCloudUtil.getPropertyValue("CarbonAppUploaderService"));
+            cAppUploaderstub = new CarbonAppUploaderStub(IntCloudUtil.getPropertyValue("CarbonAppUploaderService"));
+            appAdminStub = new ApplicationAdminStub(IntCloudUtil.getPropertyValue("ApplicationAdminService"));
         } catch (AxisFault axisFault) {
             throw new IntCloudException(axisFault.getMessage(), axisFault);
         }
-        ServiceClient client = stub._getServiceClient();
-        Options client_options = client.getOptions();
-        HttpTransportProperties.Authenticator authenticator = new HttpTransportProperties.Authenticator();
-        authenticator.setUsername(IntCloudUtil.getPropertyValue("ESBServerUserName"));
-        authenticator.setPassword(IntCloudUtil.getPropertyValue("ESBServerPassword"));
-        authenticator.setPreemptiveAuthentication(true);
-        client_options.setProperty(org.apache.axis2.transport.http.HTTPConstants.AUTHENTICATE, authenticator);
-        client.setOptions(client_options);
+        ServiceClient clientCApp = cAppUploaderstub._getServiceClient();
+        Options client_optionsCApp = clientCApp.getOptions();
+        HttpTransportProperties.Authenticator authenticatorCApp = new HttpTransportProperties.Authenticator();
+        authenticatorCApp.setUsername(IntCloudUtil.getPropertyValue("ESBServerUserName"));
+        authenticatorCApp.setPassword(IntCloudUtil.getPropertyValue("ESBServerPassword"));
+        authenticatorCApp.setPreemptiveAuthentication(true);
+        client_optionsCApp.setProperty(org.apache.axis2.transport.http.HTTPConstants.AUTHENTICATE, authenticatorCApp);
+        clientCApp.setOptions(client_optionsCApp);
+
+        ServiceClient clientAppAdmin = appAdminStub._getServiceClient();
+        Options client_optionsAppAdmin = clientAppAdmin.getOptions();
+        HttpTransportProperties.Authenticator authenticatorAppAdmin = new HttpTransportProperties.Authenticator();
+        authenticatorAppAdmin.setUsername(IntCloudUtil.getPropertyValue("ESBServerUserName"));
+        authenticatorAppAdmin.setPassword(IntCloudUtil.getPropertyValue("ESBServerPassword"));
+        authenticatorAppAdmin.setPreemptiveAuthentication(true);
+        client_optionsAppAdmin.setProperty(org.apache.axis2.transport.http.HTTPConstants.AUTHENTICATE, authenticatorAppAdmin);
+        clientAppAdmin.setOptions(client_optionsAppAdmin);
     }
 
     public static CarbonApplicationClient getInstance() throws IntCloudException {
@@ -92,9 +104,19 @@ public class CarbonApplicationClient {
         UploadedFileItem[] ii = new UploadedFileItem[1];
         ii[0] = i;
         try {
-            stub.uploadApp(ii);
+            cAppUploaderstub.uploadApp(ii);
         } catch (RemoteException e) {
             throw new IntCloudException(e.getMessage(), e);
+        }
+    }
+
+    public void unDeployCarbonApp(String carbonApplicationName) {
+        String cAppName = carbonApplicationName.substring(0,carbonApplicationName.length()-4);
+        log.info("Undeploying carbon application : " + cAppName);
+        try {
+            appAdminStub.deleteApplication(cAppName);
+        } catch (Exception e) {
+            log.error(e);
         }
     }
 }

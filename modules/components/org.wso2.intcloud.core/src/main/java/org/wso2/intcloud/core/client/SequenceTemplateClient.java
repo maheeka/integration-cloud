@@ -79,6 +79,8 @@ public class SequenceTemplateClient {
             if (templates != null) {
                 for (TemplateInfo template : templates) {
 
+                    log.info("Integration template found : " + template.getName());
+
                     String artifactContainerName = template.getArtifactContainerName();
                     if (artifactContainerName != null) {
                         artifactContainerName = artifactContainerName
@@ -95,7 +97,8 @@ public class SequenceTemplateClient {
 
                             OMAttribute templateName = (OMAttribute) templateNameXpath.selectSingleNode(seqOMElement);
 
-                            jsonConfiguration.append("\"template_name\" : \"" + templateName.getAttributeValue() + "\"," );
+                            jsonConfiguration
+                                    .append("\"template_name\" : \"" + templateName.getAttributeValue() + "\",");
 
                             AXIOMXPath parametersXpath = new AXIOMXPath("//ns:parameter/@name");
                             parametersXpath.addNamespace("ns", "http://ws.apache.org/ns/synapse");
@@ -134,6 +137,8 @@ public class SequenceTemplateClient {
                     }
                 }
 
+            } else {
+                log.info("Integration templates not found");
             }
         } catch (RemoteException | JaxenException e) {
             throw new IntCloudException(e.getMessage(), e);
