@@ -130,7 +130,7 @@ public class CarbonApplicationClient {
             }
             if (applicationList != null) {
                 if (Arrays.asList(applicationList).contains(cAppName)) {
-                    log.info("car file deployed in " + time + " mills");
+                    log.info("Carbon application is deployed in " + time + " milliseconds");
                     isCarFileDeployed = true;
                     break;
                 }
