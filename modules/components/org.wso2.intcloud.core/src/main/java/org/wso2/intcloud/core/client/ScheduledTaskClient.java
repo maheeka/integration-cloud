@@ -115,7 +115,8 @@ public class ScheduledTaskClient {
         return taskOM;
     }
 
-    public void addTestTask(String applicationName, JSONObject paramConfigurationJSON) throws IntCloudException {
+    public void addTestTask(String applicationName, JSONObject paramConfigurationJSON)
+            throws IntCloudException {
 
         String randomApplicationName = applicationName + UUID.randomUUID();
 
@@ -126,6 +127,12 @@ public class ScheduledTaskClient {
 
         String taskName = task.getAttributeValue(new QName("name"));
         String taskGroup = task.getAttributeValue(new QName("group"));
+
+        try {
+            Thread.sleep(20000);
+        } catch (InterruptedException e) {
+            throw new IntCloudException(e.getMessage(), e);
+        }
 
         deleteTask(taskName, taskGroup);
 

@@ -48,10 +48,12 @@ public class SequenceTemplateClient {
         if (sequenceTemplateClient == null) {
             synchronized (SequenceTemplateClient.class) {
                 if (sequenceTemplateClient == null) {
+                    log.info("initializing sequence template client");
                     sequenceTemplateClient = new SequenceTemplateClient();
                 }
             }
         }
+        log.info("getting sequence template instance");
         return sequenceTemplateClient;
     }
 
@@ -148,4 +150,6 @@ public class SequenceTemplateClient {
         log.info("Setting json configuration : " + jsonConfiguration);
         return jsonConfiguration.toString();
     }
+
+
 }

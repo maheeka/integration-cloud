@@ -30,6 +30,8 @@ import org.wso2.carbon.application.mgt.stub.upload.CarbonAppUploaderStub;
 import org.wso2.carbon.application.mgt.stub.upload.types.carbon.UploadedFileItem;
 import org.wso2.intcloud.common.IntCloudException;
 import org.wso2.intcloud.common.util.IntCloudUtil;
+import org.wso2.intcloud.services.tenantcappuploader.stub.types.TenantCarbonAppUploaderRegistryExceptionException;
+import org.wso2.intcloud.services.tenantcappuploader.stub.types.TenantCarbonAppUploaderStub;
 
 import javax.activation.DataHandler;
 import java.io.File;
@@ -44,19 +46,25 @@ public class CarbonApplicationClient {
 
     private static CarbonApplicationClient carbonApplicationClient = null;
 
-    CarbonAppUploaderStub cAppUploaderstub = null;
+    CarbonAppUploaderStub cAppUploaderStub = null;
     ApplicationAdminStub appAdminStub = null;
+    TenantCarbonAppUploaderStub tenantCAppUploaderStub = null;
 
     int MAX_TIME = 200000;
 
     private CarbonApplicationClient() throws IntCloudException {
         try {
-            cAppUploaderstub = new CarbonAppUploaderStub(IntCloudUtil.getPropertyValue("CarbonAppUploaderService"));
+            cAppUploaderStub = new CarbonAppUploaderStub(IntCloudUtil.getPropertyValue("CarbonAppUploaderService"));
+
             appAdminStub = new ApplicationAdminStub(IntCloudUtil.getPropertyValue("ApplicationAdminService"));
+
+            tenantCAppUploaderStub =
+                    new TenantCarbonAppUploaderStub(IntCloudUtil.getPropertyValue("TenantCarbonAppUploaderService"));
+
         } catch (AxisFault axisFault) {
             throw new IntCloudException(axisFault.getMessage(), axisFault);
         }
-        ServiceClient clientCApp = cAppUploaderstub._getServiceClient();
+        ServiceClient clientCApp = cAppUploaderStub._getServiceClient();
         Options client_optionsCApp = clientCApp.getOptions();
         HttpTransportProperties.Authenticator authenticatorCApp = new HttpTransportProperties.Authenticator();
         authenticatorCApp.setUsername(IntCloudUtil.getPropertyValue("ESBServerUserName"));
@@ -68,12 +76,23 @@ public class CarbonApplicationClient {
         ServiceClient clientAppAdmin = appAdminStub._getServiceClient();
         Options client_optionsAppAdmin = clientAppAdmin.getOptions();
         HttpTransportProperties.Authenticator authenticatorAppAdmin = new HttpTransportProperties.Authenticator();
-        authenticatorAppAdmin.setUsername(IntCloudUtil.getPropertyValue("ESBServerUserName"));
-        authenticatorAppAdmin.setPassword(IntCloudUtil.getPropertyValue("ESBServerPassword"));
+        authenticatorCApp.setUsername(IntCloudUtil.getPropertyValue("ESBServerUserName"));
+        authenticatorCApp.setPassword(IntCloudUtil.getPropertyValue("ESBServerPassword"));
         authenticatorAppAdmin.setPreemptiveAuthentication(true);
         client_optionsAppAdmin
                 .setProperty(org.apache.axis2.transport.http.HTTPConstants.AUTHENTICATE, authenticatorAppAdmin);
         clientAppAdmin.setOptions(client_optionsAppAdmin);
+
+        ServiceClient clientTenantCAppAdmin = tenantCAppUploaderStub._getServiceClient();
+        Options client_optionsTenantCAppAdmin = clientTenantCAppAdmin.getOptions();
+        HttpTransportProperties.Authenticator authenticatorTenantCAppAdmin =
+                new HttpTransportProperties.Authenticator();
+        authenticatorTenantCAppAdmin.setUsername(IntCloudUtil.getPropertyValue("ESBServerUserName"));
+        authenticatorTenantCAppAdmin.setPassword(IntCloudUtil.getPropertyValue("ESBServerPassword"));
+        authenticatorTenantCAppAdmin.setPreemptiveAuthentication(true);
+        client_optionsTenantCAppAdmin
+                .setProperty(org.apache.axis2.transport.http.HTTPConstants.AUTHENTICATE, authenticatorTenantCAppAdmin);
+        clientTenantCAppAdmin.setOptions(client_optionsTenantCAppAdmin);
     }
 
     public static CarbonApplicationClient getInstance() throws IntCloudException {
@@ -87,9 +106,27 @@ public class CarbonApplicationClient {
         return carbonApplicationClient;
     }
 
+    public void deployCappInTenant(String carbonApplicationName, String carbonApplicationPath, int tenantId)
+            throws IntCloudException {
+
+        log.info("Deploying carbon application '" + carbonApplicationName + "' from '" + carbonApplicationPath +
+                 "' to tenant " + tenantId);
+
+        try {
+            tenantCAppUploaderStub.uploadCarbonApplication(carbonApplicationName, carbonApplicationPath, tenantId);
+
+            tenantCAppUploaderStub.deployCarbonApplication(carbonApplicationName, tenantId);
+
+            tenantCAppUploaderStub.removeCarbonApplication(carbonApplicationName, tenantId);
+
+        } catch (RemoteException | TenantCarbonAppUploaderRegistryExceptionException e) {
+            throw new IntCloudException(e.getMessage(), e);
+        }
+    }
+
     public void deployCarbonApp(String carbonApplicationName, String carbonApplicationPath) throws IntCloudException {
 
-        log.info("Deploying carbon application '" + carbonApplicationName + "' from '" + carbonApplicationPath + "'");
+        log.info("Deploying carbon application '" + carbonApplicationName + "' from '" + carbonApplicationPath);
 
         File file = new File(carbonApplicationPath);
 
@@ -110,7 +147,7 @@ public class CarbonApplicationClient {
         UploadedFileItem[] ii = new UploadedFileItem[1];
         ii[0] = i;
         try {
-            cAppUploaderstub.uploadApp(ii);
+            cAppUploaderStub.uploadApp(ii);
         } catch (RemoteException e) {
             throw new IntCloudException(e.getMessage(), e);
         }
@@ -122,18 +159,12 @@ public class CarbonApplicationClient {
         Calendar startTime = Calendar.getInstance();
         long time;
         while ((time = (Calendar.getInstance().getTimeInMillis() - startTime.getTimeInMillis())) < MAX_TIME) {
-            String[] applicationList = new String[0];
-            try {
-                applicationList = appAdminStub.listAllApplications();
-            } catch (RemoteException | ApplicationAdminExceptionException e) {
-                throw new IntCloudException("Error getting deployed application list from server", e);
-            }
-            if (applicationList != null) {
-                if (Arrays.asList(applicationList).contains(cAppName)) {
-                    log.info("Carbon application is deployed in " + time + " milliseconds");
-                    isCarFileDeployed = true;
-                    break;
-                }
+            boolean carbonAppExists = isCarbonAppExists(carbonApplicationName);
+
+            if (carbonAppExists) {
+                log.info("Carbon application is deployed in " + time + " milliseconds");
+                isCarFileDeployed = true;
+                break;
             }
             try {
                 Thread.sleep(500);
@@ -150,9 +181,30 @@ public class CarbonApplicationClient {
         }
     }
 
+    public boolean isCarbonAppExists(String carbonApplicationName) throws IntCloudException {
+        if (carbonApplicationName.endsWith(".car")) {
+            carbonApplicationName = carbonApplicationName.substring(0, carbonApplicationName.length() - 4);
+        }
+
+        String[] applicationList;
+        try {
+            applicationList = appAdminStub.listAllApplications();
+            log.info("Found applications " + applicationList);
+        } catch (RemoteException | ApplicationAdminExceptionException e) {
+            throw new IntCloudException("Error getting deployed application list from server", e);
+        }
+        if (applicationList != null) {
+            if (Arrays.asList(applicationList).contains(carbonApplicationName)) {
+                log.info("Carbon application " + carbonApplicationName + " exists");
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void unDeployCarbonApp(String carbonApplicationName) {
         String cAppName = carbonApplicationName.substring(0, carbonApplicationName.length() - 4);
-        log.info("Undeploying carbon application : " + cAppName);
+        log.info("Un-deploying carbon application : " + cAppName);
         try {
             appAdminStub.deleteApplication(cAppName);
         } catch (Exception e) {
