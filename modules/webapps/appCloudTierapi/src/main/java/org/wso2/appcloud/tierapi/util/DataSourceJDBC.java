@@ -41,7 +41,7 @@ public class DataSourceJDBC {
 			Context envCtx = (Context) selectorContext.lookup("java:comp/env");
 
 			DataSource ds = (DataSource)
-					envCtx.lookup("jdbc/WSO2AppCloud1");
+					envCtx.lookup("jdbc/WSO2IntCloud");
 
 			conn = ds.getConnection();
 
