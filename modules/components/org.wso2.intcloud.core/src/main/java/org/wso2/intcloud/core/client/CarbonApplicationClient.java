@@ -106,7 +106,7 @@ public class CarbonApplicationClient {
         return carbonApplicationClient;
     }
 
-    public void deployCappInTenant(String carbonApplicationName, String carbonApplicationPath, int tenantId)
+    public void deployCarbonApp(int tenantId, String carbonApplicationName, String carbonApplicationPath)
             throws IntCloudException {
 
         log.info("Deploying carbon application '" + carbonApplicationName + "' from '" + carbonApplicationPath +

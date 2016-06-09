@@ -63,6 +63,11 @@
                 <version>${carbon.platform.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.feature.mgt.services</artifactId>
+                <version>${carbon.platform.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.framework</artifactId>
                 <version>1.0.3</version>
@@ -90,6 +95,11 @@
             <dependency>
                 <groupId>org.wso2.appcloud</groupId>
                 <artifactId>org.wso2.intcloud.services.tenantcappuploader.stub</artifactId>
+                <version>${appcloud.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.appcloud</groupId>
+                <artifactId>org.wso2.intcloud.services.tenant.templates.stub</artifactId>
                 <version>${appcloud.version}</version>
             </dependency>
             <dependency>
@@ -189,6 +199,17 @@
                 <version>7.0.34</version>
                 <scope>provided</scope>
             </dependency>
+
+            <dependency>
+                <groupId>org.wso2.carbon.mediation</groupId>
+                <artifactId>org.wso2.carbon.mediation.templates.stub</artifactId>
+                <version>${carbon.mediation.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.mediation</groupId>
+                <artifactId>org.wso2.carbon.mediation.templates</artifactId>
+                <version>${carbon.mediation.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -235,6 +256,8 @@
         <module>modules/webapps/appCloudTierapi</module>
         <module>modules/services/org.wso2.intcloud.services.tenantcappuploader</module>
         <module>modules/service-stubs/org.wso2.intcloud.services.tenantcappuploader.stub</module>
+        <module>modules/services/org.wso2.intcloud.services.tenant.templates</module>
+        <module>modules/service-stubs/org.wso2.intcloud.services.tenant.templates.stub</module>
         
         <!--module>modules/integreation/integration-tests</module-->
     </modules>
@@ -322,5 +345,6 @@
         <equinox.osgi.services.version>3.4.0.v20140312-2051</equinox.osgi.services.version>
         <maven.checkstyleplugin.version>2.16</maven.checkstyleplugin.version>
         <maven.findbugsplugin.version>3.0.2</maven.findbugsplugin.version>
+        <carbon.mediation.version>4.6.0</carbon.mediation.version>
     </properties>
 </project>

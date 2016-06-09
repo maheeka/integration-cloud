@@ -48,10 +48,9 @@ public class ESBClient {
         CarbonApplicationClient.getInstance().deployCarbonApp(carbonApplicationName, carbonApplicationPath);
     }
 
-    public void deployCarbonAppInTenant(String carbonApplicationName, String carbonApplicationPath, int tenantId)
+    public void deployCarbonApp(int tenantId, String carbonApplicationName, String carbonApplicationPath)
             throws IntCloudException {
-        CarbonApplicationClient.getInstance()
-                               .deployCappInTenant(carbonApplicationName, carbonApplicationPath, tenantId);
+        CarbonApplicationClient.getInstance().deployCarbonApp(tenantId, carbonApplicationName, carbonApplicationPath);
     }
 
     public void unDeployCarbonApp(String carbonApplicationName) throws IntCloudException {
@@ -59,8 +58,12 @@ public class ESBClient {
     }
 
     public String getIntegrationParamConfiguration(String carbonApplicationName) throws IntCloudException {
-        log.info("getting integration param configurations");
         return SequenceTemplateClient.getInstance().getSequenceTemplate(carbonApplicationName);
+    }
+
+    public String getIntegrationParamConfiguration(int tenantId, String carbonApplicationName)
+            throws IntCloudException {
+        return SequenceTemplateClient.getInstance().getSequenceTemplate(tenantId, carbonApplicationName);
     }
 
     public String deployScheduleTask(String applicationName, String paramConfiguration) throws IntCloudException {

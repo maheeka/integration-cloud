@@ -27,7 +27,7 @@ public class Application {
     private String description;
     private String defaultVersion;
     private String applicationType;
-    private String cAppName;
+    private String carbonApplicationName;
     private Blob icon;
     private List<Version> versions;
     private String paramConfiguration;
@@ -79,11 +79,11 @@ public class Application {
     }
 
     public String getCarbonApplicationName() {
-        return cAppName;
+        return carbonApplicationName;
     }
 
-    public void setCarbonApplicationName(String cAppName) {
-        this.cAppName = cAppName;
+    public void setCarbonApplicationName(String carbonApplicationName) {
+        this.carbonApplicationName = carbonApplicationName;
     }
 
     public void setIcon(Blob icon) {
