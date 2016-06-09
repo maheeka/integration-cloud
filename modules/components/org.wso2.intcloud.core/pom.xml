@@ -66,6 +66,10 @@
             <groupId>org.wso2.appcloud</groupId>
             <artifactId>org.wso2.intcloud.services.tenant.templates.stub</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.appcloud</groupId>
+            <artifactId>org.wso2.intcloud.services.tenant.tasks.stub</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

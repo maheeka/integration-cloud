@@ -19,6 +19,13 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <dependencies>
+        <dependency>
+            <groupId>org.wso2.carbon.mediation</groupId>
+            <artifactId>org.wso2.carbon.task</artifactId>
+            <version>4.6.0</version>
+        </dependency>
+    </dependencies>
 
     <parent>
         <groupId>org.wso2</groupId>
@@ -100,6 +107,11 @@
             <dependency>
                 <groupId>org.wso2.appcloud</groupId>
                 <artifactId>org.wso2.intcloud.services.tenant.templates.stub</artifactId>
+                <version>${appcloud.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.appcloud</groupId>
+                <artifactId>org.wso2.intcloud.services.tenant.tasks.stub</artifactId>
                 <version>${appcloud.version}</version>
             </dependency>
             <dependency>
@@ -208,6 +220,11 @@
             <dependency>
                 <groupId>org.wso2.carbon.mediation</groupId>
                 <artifactId>org.wso2.carbon.mediation.templates</artifactId>
+                <version>${carbon.mediation.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.mediation</groupId>
+                <artifactId>org.wso2.carbon.task</artifactId>
                 <version>${carbon.mediation.version}</version>
             </dependency>
         </dependencies>

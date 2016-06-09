@@ -1,0 +1,164 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://tasks.tenant.services.intcloud.wso2.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ax2607="http://task.carbon.wso2.org/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tasks.tenant.services.intcloud.wso2.org">
+   <wsdl:documentation>TenantTaskAdminService</wsdl:documentation>
+   <wsdl:types>
+      <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://task.carbon.wso2.org/xsd">
+         <xs:complexType name="TaskManagementException">
+            <xs:sequence/>
+         </xs:complexType>
+      </xs:schema>
+      <xs:schema xmlns:ax2608="http://task.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://tasks.tenant.services.intcloud.wso2.org">
+         <xs:import namespace="http://task.carbon.wso2.org/xsd"/>
+         <xs:element name="TenantTaskAdminServiceTaskManagementException">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element minOccurs="0" name="TaskManagementException" nillable="true" type="ax2608:TaskManagementException"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="deleteTaskDescriptionInTenant">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element minOccurs="0" name="tenantId" type="xs:int"/>
+                  <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+                  <xs:element minOccurs="0" name="group" nillable="true" type="xs:string"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="deleteTaskDescriptionInTenantResponse">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="addTaskDescriptionInTenant">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element minOccurs="0" name="tenantId" type="xs:int"/>
+                  <xs:element minOccurs="0" name="taskElement" nillable="true" type="xs:string"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="addTaskDescriptionInTenantResponse">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+      </xs:schema>
+   </wsdl:types>
+   <wsdl:message name="deleteTaskDescriptionInTenantRequest">
+      <wsdl:part name="parameters" element="ns:deleteTaskDescriptionInTenant"/>
+   </wsdl:message>
+   <wsdl:message name="deleteTaskDescriptionInTenantResponse">
+      <wsdl:part name="parameters" element="ns:deleteTaskDescriptionInTenantResponse"/>
+   </wsdl:message>
+   <wsdl:message name="TenantTaskAdminServiceTaskManagementException">
+      <wsdl:part name="parameters" element="ns:TenantTaskAdminServiceTaskManagementException"/>
+   </wsdl:message>
+   <wsdl:message name="addTaskDescriptionInTenantRequest">
+      <wsdl:part name="parameters" element="ns:addTaskDescriptionInTenant"/>
+   </wsdl:message>
+   <wsdl:message name="addTaskDescriptionInTenantResponse">
+      <wsdl:part name="parameters" element="ns:addTaskDescriptionInTenantResponse"/>
+   </wsdl:message>
+   <wsdl:portType name="TenantTaskAdminServicePortType">
+      <wsdl:operation name="deleteTaskDescriptionInTenant">
+         <wsdl:input message="ns:deleteTaskDescriptionInTenantRequest" wsaw:Action="urn:deleteTaskDescriptionInTenant"/>
+         <wsdl:output message="ns:deleteTaskDescriptionInTenantResponse" wsaw:Action="urn:deleteTaskDescriptionInTenantResponse"/>
+         <wsdl:fault message="ns:TenantTaskAdminServiceTaskManagementException" name="TenantTaskAdminServiceTaskManagementException" wsaw:Action="urn:deleteTaskDescriptionInTenantTenantTaskAdminServiceTaskManagementException"/>
+      </wsdl:operation>
+      <wsdl:operation name="addTaskDescriptionInTenant">
+         <wsdl:input message="ns:addTaskDescriptionInTenantRequest" wsaw:Action="urn:addTaskDescriptionInTenant"/>
+         <wsdl:output message="ns:addTaskDescriptionInTenantResponse" wsaw:Action="urn:addTaskDescriptionInTenantResponse"/>
+         <wsdl:fault message="ns:TenantTaskAdminServiceTaskManagementException" name="TenantTaskAdminServiceTaskManagementException" wsaw:Action="urn:addTaskDescriptionInTenantTenantTaskAdminServiceTaskManagementException"/>
+      </wsdl:operation>
+   </wsdl:portType>
+   <wsdl:binding name="TenantTaskAdminServiceSoap11Binding" type="ns:TenantTaskAdminServicePortType">
+      <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+      <wsdl:operation name="deleteTaskDescriptionInTenant">
+         <soap:operation soapAction="urn:deleteTaskDescriptionInTenant" style="document"/>
+         <wsdl:input>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <soap:body use="literal"/>
+         </wsdl:output>
+         <wsdl:fault name="TenantTaskAdminServiceTaskManagementException">
+            <soap:fault use="literal" name="TenantTaskAdminServiceTaskManagementException"/>
+         </wsdl:fault>
+      </wsdl:operation>
+      <wsdl:operation name="addTaskDescriptionInTenant">
+         <soap:operation soapAction="urn:addTaskDescriptionInTenant" style="document"/>
+         <wsdl:input>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <soap:body use="literal"/>
+         </wsdl:output>
+         <wsdl:fault name="TenantTaskAdminServiceTaskManagementException">
+            <soap:fault use="literal" name="TenantTaskAdminServiceTaskManagementException"/>
+         </wsdl:fault>
+      </wsdl:operation>
+   </wsdl:binding>
+   <wsdl:binding name="TenantTaskAdminServiceSoap12Binding" type="ns:TenantTaskAdminServicePortType">
+      <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+      <wsdl:operation name="deleteTaskDescriptionInTenant">
+         <soap12:operation soapAction="urn:deleteTaskDescriptionInTenant" style="document"/>
+         <wsdl:input>
+            <soap12:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <soap12:body use="literal"/>
+         </wsdl:output>
+         <wsdl:fault name="TenantTaskAdminServiceTaskManagementException">
+            <soap12:fault use="literal" name="TenantTaskAdminServiceTaskManagementException"/>
+         </wsdl:fault>
+      </wsdl:operation>
+      <wsdl:operation name="addTaskDescriptionInTenant">
+         <soap12:operation soapAction="urn:addTaskDescriptionInTenant" style="document"/>
+         <wsdl:input>
+            <soap12:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <soap12:body use="literal"/>
+         </wsdl:output>
+         <wsdl:fault name="TenantTaskAdminServiceTaskManagementException">
+            <soap12:fault use="literal" name="TenantTaskAdminServiceTaskManagementException"/>
+         </wsdl:fault>
+      </wsdl:operation>
+   </wsdl:binding>
+   <wsdl:binding name="TenantTaskAdminServiceHttpBinding" type="ns:TenantTaskAdminServicePortType">
+      <http:binding verb="POST"/>
+      <wsdl:operation name="deleteTaskDescriptionInTenant">
+         <http:operation location="deleteTaskDescriptionInTenant"/>
+         <wsdl:input>
+            <mime:content type="text/xml" part="parameters"/>
+         </wsdl:input>
+         <wsdl:output>
+            <mime:content type="text/xml" part="parameters"/>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="addTaskDescriptionInTenant">
+         <http:operation location="addTaskDescriptionInTenant"/>
+         <wsdl:input>
+            <mime:content type="text/xml" part="parameters"/>
+         </wsdl:input>
+         <wsdl:output>
+            <mime:content type="text/xml" part="parameters"/>
+         </wsdl:output>
+      </wsdl:operation>
+   </wsdl:binding>
+   <wsdl:service name="TenantTaskAdminService">
+      <wsdl:port name="TenantTaskAdminServiceHttpsSoap11Endpoint" binding="ns:TenantTaskAdminServiceSoap11Binding">
+         <soap:address location="https://maheekas-macbook-pro-4.local:8253/services/TenantTaskAdminService.TenantTaskAdminServiceHttpsSoap11Endpoint"/>
+      </wsdl:port>
+      <wsdl:port name="TenantTaskAdminServiceHttpsSoap12Endpoint" binding="ns:TenantTaskAdminServiceSoap12Binding">
+         <soap12:address location="https://maheekas-macbook-pro-4.local:8253/services/TenantTaskAdminService.TenantTaskAdminServiceHttpsSoap12Endpoint"/>
+      </wsdl:port>
+      <wsdl:port name="TenantTaskAdminServiceHttpsEndpoint" binding="ns:TenantTaskAdminServiceHttpBinding">
+         <http:address location="https://maheekas-macbook-pro-4.local:8253/services/TenantTaskAdminService.TenantTaskAdminServiceHttpsEndpoint"/>
+      </wsdl:port>
+   </wsdl:service>
+</wsdl:definitions>

@@ -15,17 +15,17 @@
  * under the License.
  */
 
-package org.wso2.intcloud.services.tenant.templates.internal;
+package org.wso2.intcloud.services.tenant.tasks.internal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Template Admin Services for Tenant Mode
+ * Task Admin Services for Tenant Mode
  *
- * @scr.component name="org.wso2.intcloud.services.tenant.templates" immediate="true"
+ * @scr.component name="org.wso2.intcloud.services.tenant.tasks" immediate="true"
  */
-public class TenantTemplateAdminServiceComponent {
+public class TenantTaskAdminServiceComponent {
 
-    private static final Log log = LogFactory.getLog(TenantTemplateAdminServiceComponent.class);
+    private static final Log log = LogFactory.getLog(TenantTaskAdminServiceComponent.class);
 }

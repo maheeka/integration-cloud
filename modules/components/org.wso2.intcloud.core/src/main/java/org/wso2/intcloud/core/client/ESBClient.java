@@ -76,8 +76,20 @@ public class ESBClient {
         ScheduledTaskClient.getInstance().addTestTask(applicationName, new JSONObject(paramConfiguration));
     }
 
-    public void stopScheduleTask(String applicationName, String taskConfiguration)
+    public String deployScheduleTask(int tenantId, String applicationName, String paramConfiguration)
+            throws IntCloudException {
+        OMElement taskConfiguration = ScheduledTaskClient.getInstance().addTask(tenantId, applicationName,
+                                                                                new JSONObject(paramConfiguration));
+        return taskConfiguration.toString();
+    }
+
+    public void deployTestScheduleTask(int tenantId, String applicationName, String paramConfiguration)
+            throws IntCloudException {
+        ScheduledTaskClient.getInstance().addTestTask(tenantId, applicationName, new JSONObject(paramConfiguration));
+    }
+
+    public void stopScheduleTask(int tenantId, String applicationName, String taskConfiguration)
             throws IntCloudException, TaskManagementException, XMLStreamException, IOException, InterruptedException {
-        ScheduledTaskClient.getInstance().stopTask(applicationName, taskConfiguration);
+        ScheduledTaskClient.getInstance().stopTask(tenantId, applicationName, taskConfiguration);
     }
 }
