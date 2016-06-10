@@ -25,41 +25,11 @@
                <xs:sequence>
                   <xs:element minOccurs="0" name="tenantId" type="xs:int"/>
                   <xs:element minOccurs="0" name="carbonApplicationName" nillable="true" type="xs:string"/>
-               </xs:sequence>
-            </xs:complexType>
-         </xs:element>
-         <xs:element name="deployCarbonApplicationResponse">
-            <xs:complexType>
-               <xs:sequence>
-                  <xs:element minOccurs="0" name="return" type="xs:boolean"/>
-               </xs:sequence>
-            </xs:complexType>
-         </xs:element>
-         <xs:element name="uploadCarbonApplicationToRegistry">
-            <xs:complexType>
-               <xs:sequence>
-                  <xs:element minOccurs="0" name="tenantId" type="xs:int"/>
-                  <xs:element minOccurs="0" name="carbonApplicationName" nillable="true" type="xs:string"/>
                   <xs:element minOccurs="0" name="carbonApplicationPath" nillable="true" type="xs:string"/>
                </xs:sequence>
             </xs:complexType>
          </xs:element>
-         <xs:element name="uploadCarbonApplicationToRegistryResponse">
-            <xs:complexType>
-               <xs:sequence>
-                  <xs:element minOccurs="0" name="return" type="xs:boolean"/>
-               </xs:sequence>
-            </xs:complexType>
-         </xs:element>
-         <xs:element name="removeCarbonApplicationInRegistry">
-            <xs:complexType>
-               <xs:sequence>
-                  <xs:element minOccurs="0" name="tenantId" type="xs:int"/>
-                  <xs:element minOccurs="0" name="carbonApplicationName" nillable="true" type="xs:string"/>
-               </xs:sequence>
-            </xs:complexType>
-         </xs:element>
-         <xs:element name="removeCarbonApplicationInRegistryResponse">
+         <xs:element name="deployCarbonApplicationResponse">
             <xs:complexType>
                <xs:sequence>
                   <xs:element minOccurs="0" name="return" type="xs:boolean"/>
@@ -82,63 +52,17 @@
    <wsdl:message name="TenantCarbonAppDeployerAdminServiceRegistryException">
       <wsdl:part name="parameters" element="ns:TenantCarbonAppDeployerAdminServiceRegistryException"/>
    </wsdl:message>
-   <wsdl:message name="removeCarbonApplicationInRegistryRequest">
-      <wsdl:part name="parameters" element="ns:removeCarbonApplicationInRegistry"/>
-   </wsdl:message>
-   <wsdl:message name="removeCarbonApplicationInRegistryResponse">
-      <wsdl:part name="parameters" element="ns:removeCarbonApplicationInRegistryResponse"/>
-   </wsdl:message>
-   <wsdl:message name="uploadCarbonApplicationToRegistryRequest">
-      <wsdl:part name="parameters" element="ns:uploadCarbonApplicationToRegistry"/>
-   </wsdl:message>
-   <wsdl:message name="uploadCarbonApplicationToRegistryResponse">
-      <wsdl:part name="parameters" element="ns:uploadCarbonApplicationToRegistryResponse"/>
-   </wsdl:message>
    <wsdl:portType name="TenantCarbonAppDeployerAdminServicePortType">
       <wsdl:operation name="deployCarbonApplication">
          <wsdl:input message="ns:deployCarbonApplicationRequest" wsaw:Action="urn:deployCarbonApplication"/>
          <wsdl:output message="ns:deployCarbonApplicationResponse" wsaw:Action="urn:deployCarbonApplicationResponse"/>
          <wsdl:fault message="ns:TenantCarbonAppDeployerAdminServiceRegistryException" name="TenantCarbonAppDeployerAdminServiceRegistryException" wsaw:Action="urn:deployCarbonApplicationTenantCarbonAppDeployerAdminServiceRegistryException"/>
       </wsdl:operation>
-      <wsdl:operation name="removeCarbonApplicationInRegistry">
-         <wsdl:input message="ns:removeCarbonApplicationInRegistryRequest" wsaw:Action="urn:removeCarbonApplicationInRegistry"/>
-         <wsdl:output message="ns:removeCarbonApplicationInRegistryResponse" wsaw:Action="urn:removeCarbonApplicationInRegistryResponse"/>
-         <wsdl:fault message="ns:TenantCarbonAppDeployerAdminServiceRegistryException" name="TenantCarbonAppDeployerAdminServiceRegistryException" wsaw:Action="urn:removeCarbonApplicationInRegistryTenantCarbonAppDeployerAdminServiceRegistryException"/>
-      </wsdl:operation>
-      <wsdl:operation name="uploadCarbonApplicationToRegistry">
-         <wsdl:input message="ns:uploadCarbonApplicationToRegistryRequest" wsaw:Action="urn:uploadCarbonApplicationToRegistry"/>
-         <wsdl:output message="ns:uploadCarbonApplicationToRegistryResponse" wsaw:Action="urn:uploadCarbonApplicationToRegistryResponse"/>
-         <wsdl:fault message="ns:TenantCarbonAppDeployerAdminServiceRegistryException" name="TenantCarbonAppDeployerAdminServiceRegistryException" wsaw:Action="urn:uploadCarbonApplicationToRegistryTenantCarbonAppDeployerAdminServiceRegistryException"/>
-      </wsdl:operation>
    </wsdl:portType>
    <wsdl:binding name="TenantCarbonAppDeployerAdminServiceSoap11Binding" type="ns:TenantCarbonAppDeployerAdminServicePortType">
       <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
       <wsdl:operation name="deployCarbonApplication">
          <soap:operation soapAction="urn:deployCarbonApplication" style="document"/>
-         <wsdl:input>
-            <soap:body use="literal"/>
-         </wsdl:input>
-         <wsdl:output>
-            <soap:body use="literal"/>
-         </wsdl:output>
-         <wsdl:fault name="TenantCarbonAppDeployerAdminServiceRegistryException">
-            <soap:fault use="literal" name="TenantCarbonAppDeployerAdminServiceRegistryException"/>
-         </wsdl:fault>
-      </wsdl:operation>
-      <wsdl:operation name="removeCarbonApplicationInRegistry">
-         <soap:operation soapAction="urn:removeCarbonApplicationInRegistry" style="document"/>
-         <wsdl:input>
-            <soap:body use="literal"/>
-         </wsdl:input>
-         <wsdl:output>
-            <soap:body use="literal"/>
-         </wsdl:output>
-         <wsdl:fault name="TenantCarbonAppDeployerAdminServiceRegistryException">
-            <soap:fault use="literal" name="TenantCarbonAppDeployerAdminServiceRegistryException"/>
-         </wsdl:fault>
-      </wsdl:operation>
-      <wsdl:operation name="uploadCarbonApplicationToRegistry">
-         <soap:operation soapAction="urn:uploadCarbonApplicationToRegistry" style="document"/>
          <wsdl:input>
             <soap:body use="literal"/>
          </wsdl:input>
@@ -164,53 +88,11 @@
             <soap12:fault use="literal" name="TenantCarbonAppDeployerAdminServiceRegistryException"/>
          </wsdl:fault>
       </wsdl:operation>
-      <wsdl:operation name="removeCarbonApplicationInRegistry">
-         <soap12:operation soapAction="urn:removeCarbonApplicationInRegistry" style="document"/>
-         <wsdl:input>
-            <soap12:body use="literal"/>
-         </wsdl:input>
-         <wsdl:output>
-            <soap12:body use="literal"/>
-         </wsdl:output>
-         <wsdl:fault name="TenantCarbonAppDeployerAdminServiceRegistryException">
-            <soap12:fault use="literal" name="TenantCarbonAppDeployerAdminServiceRegistryException"/>
-         </wsdl:fault>
-      </wsdl:operation>
-      <wsdl:operation name="uploadCarbonApplicationToRegistry">
-         <soap12:operation soapAction="urn:uploadCarbonApplicationToRegistry" style="document"/>
-         <wsdl:input>
-            <soap12:body use="literal"/>
-         </wsdl:input>
-         <wsdl:output>
-            <soap12:body use="literal"/>
-         </wsdl:output>
-         <wsdl:fault name="TenantCarbonAppDeployerAdminServiceRegistryException">
-            <soap12:fault use="literal" name="TenantCarbonAppDeployerAdminServiceRegistryException"/>
-         </wsdl:fault>
-      </wsdl:operation>
    </wsdl:binding>
    <wsdl:binding name="TenantCarbonAppDeployerAdminServiceHttpBinding" type="ns:TenantCarbonAppDeployerAdminServicePortType">
       <http:binding verb="POST"/>
       <wsdl:operation name="deployCarbonApplication">
          <http:operation location="deployCarbonApplication"/>
-         <wsdl:input>
-            <mime:content type="text/xml" part="parameters"/>
-         </wsdl:input>
-         <wsdl:output>
-            <mime:content type="text/xml" part="parameters"/>
-         </wsdl:output>
-      </wsdl:operation>
-      <wsdl:operation name="removeCarbonApplicationInRegistry">
-         <http:operation location="removeCarbonApplicationInRegistry"/>
-         <wsdl:input>
-            <mime:content type="text/xml" part="parameters"/>
-         </wsdl:input>
-         <wsdl:output>
-            <mime:content type="text/xml" part="parameters"/>
-         </wsdl:output>
-      </wsdl:operation>
-      <wsdl:operation name="uploadCarbonApplicationToRegistry">
-         <http:operation location="uploadCarbonApplicationToRegistry"/>
          <wsdl:input>
             <mime:content type="text/xml" part="parameters"/>
          </wsdl:input>

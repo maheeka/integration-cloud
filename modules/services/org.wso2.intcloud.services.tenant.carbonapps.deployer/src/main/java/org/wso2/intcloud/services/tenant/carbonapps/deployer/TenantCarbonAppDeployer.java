@@ -38,29 +38,40 @@ public class TenantCarbonAppDeployer extends CarbonAppUploader {
     private static final Log log = LogFactory.getLog(TenantCarbonAppDeployer.class);
 
     private static final String REGISTRY_CAPP_LOCATION = "/cAppTemps/";
-    private static final String APP_ARCHIVE_EXTENSION = ".car";
 
     /**
      * Fetches a sample from the registry and deploys it as a CarbonApp
      *
+     * @param tenantId tenant id
      * @param carbonApplicationName Name of the carbon application
      * @return true if the operation successfully completed.
      * @throws AxisFault         Thrown if and error occurs while uploading the sample
      * @throws RegistryException Thrown if an error occurs while accessing the Registry
      */
-    public boolean deployCarbonApplication(int tenantId, String carbonApplicationName)
+    public boolean deployCarbonApplication(int tenantId, String carbonApplicationName, String carbonApplicationPath)
             throws AxisFault, RegistryException {
         try {
 
             PrivilegedCarbonContext.startTenantFlow();
             PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId, true);
 
+
+            //upload to registry
             Registry registry = (Registry) PrivilegedCarbonContext.getThreadLocalCarbonContext()
                                                                   .getRegistry(RegistryType.SYSTEM_GOVERNANCE);
+            String carbonAppPath = getCarbonAppPath(carbonApplicationName);
 
-            String cappPath = getCarbonAppPath(carbonApplicationName);
+            if (registry.resourceExists(carbonAppPath)) {
+                log.info("Carbon application already exists in " + carbonAppPath);
+                return true;
+            }
 
-            Resource sampleFile = (Resource) registry.get(cappPath);
+            File carbonApplicationFile = new File(carbonApplicationPath);
+            RegistryClientUtils.importToRegistry(carbonApplicationFile, REGISTRY_CAPP_LOCATION, registry);
+
+
+            //deploy carbon app
+            Resource sampleFile = (Resource) registry.get(carbonAppPath);
             UploadedFileItem[] fileItems = new UploadedFileItem[1];
             fileItems[0] = new UploadedFileItem();
             fileItems[0].setDataHandler(new DataHandler(
@@ -69,7 +80,16 @@ public class TenantCarbonAppDeployer extends CarbonAppUploader {
             fileItems[0].setFileType("jar");
 
             uploadApp(fileItems);
+
+
+            //delete from registry
+            if (registry.resourceExists(carbonAppPath)) {
+                log.info("Carbon application exists in " + carbonAppPath + " . deleting ..");
+                registry.delete(carbonAppPath);
+            }
+
             return true;
+
         } finally {
             PrivilegedCarbonContext.endTenantFlow();
         }
@@ -84,7 +104,7 @@ public class TenantCarbonAppDeployer extends CarbonAppUploader {
      * @return true if the operation successfully completed.
      * @throws RegistryException Thrown if an error occurs while accessing the Registry
      */
-    public boolean uploadCarbonApplicationToRegistry(int tenantId, String carbonApplicationName,
+    private boolean uploadCarbonApplicationToRegistry(int tenantId, String carbonApplicationName,
                                                      String carbonApplicationPath) throws RegistryException {
         try {
             PrivilegedCarbonContext.startTenantFlow();
@@ -110,7 +130,7 @@ public class TenantCarbonAppDeployer extends CarbonAppUploader {
         return REGISTRY_CAPP_LOCATION + carbonApplicationName;
     }
 
-    public boolean removeCarbonApplicationInRegistry(int tenantId, String carbonApplicationName)
+    private boolean removeCarbonApplicationInRegistry(int tenantId, String carbonApplicationName)
             throws RegistryException {
         try {
             PrivilegedCarbonContext.startTenantFlow();

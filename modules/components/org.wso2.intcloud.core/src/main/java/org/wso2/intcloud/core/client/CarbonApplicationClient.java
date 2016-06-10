@@ -63,11 +63,11 @@ public class CarbonApplicationClient {
 
             appAdminStub = new ApplicationAdminStub(IntCloudUtil.getPropertyValue("ApplicationAdminService"));
 
-            tenantCAppDeployerStub =
-                    new TenantCarbonAppDeployerAdminServiceStub(IntCloudUtil.getPropertyValue("TenantCarbonAppDeployerAdminService"));
+            tenantCAppDeployerStub = new TenantCarbonAppDeployerAdminServiceStub(
+                    IntCloudUtil.getPropertyValue("TenantCarbonAppDeployerAdminService"));
 
-            tenantCAppUnDeployerStub =
-                    new TenantCarbonAppUnDeployerAdminServiceStub(IntCloudUtil.getPropertyValue("TenantCarbonAppUnDeployerAdminService"));
+            tenantCAppUnDeployerStub = new TenantCarbonAppUnDeployerAdminServiceStub(
+                    IntCloudUtil.getPropertyValue("TenantCarbonAppUnDeployerAdminService"));
 
         } catch (AxisFault axisFault) {
             throw new IntCloudException(axisFault.getMessage(), axisFault);
@@ -98,8 +98,8 @@ public class CarbonApplicationClient {
         authenticatorTenantCAppDeployerAdmin.setUsername(IntCloudUtil.getPropertyValue("ESBServerUserName"));
         authenticatorTenantCAppDeployerAdmin.setPassword(IntCloudUtil.getPropertyValue("ESBServerPassword"));
         authenticatorTenantCAppDeployerAdmin.setPreemptiveAuthentication(true);
-        client_optionsTenantCAppDeployerAdmin
-                .setProperty(org.apache.axis2.transport.http.HTTPConstants.AUTHENTICATE, authenticatorTenantCAppDeployerAdmin);
+        client_optionsTenantCAppDeployerAdmin.setProperty(org.apache.axis2.transport.http.HTTPConstants.AUTHENTICATE,
+                                                          authenticatorTenantCAppDeployerAdmin);
         clientTenantCAppDeployerAdmin.setOptions(client_optionsTenantCAppDeployerAdmin);
 
         ServiceClient clientTenantCAppUndeployerAdmin = tenantCAppUnDeployerStub._getServiceClient();
@@ -109,8 +109,8 @@ public class CarbonApplicationClient {
         authenticatorTenantCAppUndeployerAdmin.setUsername(IntCloudUtil.getPropertyValue("ESBServerUserName"));
         authenticatorTenantCAppUndeployerAdmin.setPassword(IntCloudUtil.getPropertyValue("ESBServerPassword"));
         authenticatorTenantCAppUndeployerAdmin.setPreemptiveAuthentication(true);
-        client_optionsTenantCAppUnDeployerAdmin
-                .setProperty(org.apache.axis2.transport.http.HTTPConstants.AUTHENTICATE, authenticatorTenantCAppUndeployerAdmin);
+        client_optionsTenantCAppUnDeployerAdmin.setProperty(org.apache.axis2.transport.http.HTTPConstants.AUTHENTICATE,
+                                                            authenticatorTenantCAppUndeployerAdmin);
         clientTenantCAppUndeployerAdmin.setOptions(client_optionsTenantCAppUnDeployerAdmin);
     }
 
@@ -132,14 +132,36 @@ public class CarbonApplicationClient {
                  "' to tenant " + tenantId);
 
         try {
-            tenantCAppDeployerStub.uploadCarbonApplicationToRegistry(tenantId, carbonApplicationName, carbonApplicationPath);
-
-            tenantCAppDeployerStub.deployCarbonApplication(tenantId, carbonApplicationName);
-
-            tenantCAppDeployerStub.removeCarbonApplicationInRegistry(tenantId, carbonApplicationName);
-
-        } catch (RemoteException |TenantCarbonAppDeployerAdminServiceRegistryExceptionException e) {
+            tenantCAppDeployerStub.deployCarbonApplication(tenantId, carbonApplicationName, carbonApplicationPath);
+        } catch (RemoteException | TenantCarbonAppDeployerAdminServiceRegistryExceptionException e) {
             throw new IntCloudException(e.getMessage(), e);
+        }
+
+        String cAppName = carbonApplicationName.substring(0, carbonApplicationName.length() - 4);
+
+        log.info("Waiting " + MAX_TIME + " milliseconds for carbon application deployment : " + cAppName);
+        boolean isCarFileDeployed = false;
+        Calendar startTime = Calendar.getInstance();
+        long time;
+        while ((time = (Calendar.getInstance().getTimeInMillis() - startTime.getTimeInMillis())) < MAX_TIME) {
+            boolean carbonAppExists = isCarbonAppExists(tenantId, carbonApplicationName);
+
+            if (carbonAppExists) {
+                log.info("Carbon application is deployed in " + time + " milliseconds");
+                isCarFileDeployed = true;
+                break;
+            }
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                //ignore
+            }
+        }
+
+        if (isCarFileDeployed) {
+            log.info("Carbon application deployed successfully");
+        } else {
+            log.warn("Carbon application deployment failed");
         }
     }
 
