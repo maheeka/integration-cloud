@@ -1,0 +1,123 @@
+<%
+/*
+ * Copyright (c) 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *   WSO2 Inc. licenses this file to you under the Apache License,
+ *   Version 2.0 (the "License"); you may not use this file except
+ *   in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing,
+ *   software distributed under the License is distributed on an
+ *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *   KIND, either express or implied.  See the License for the
+ *   specific language governing permissions and limitations
+ *   under the License.
+ */
+
+include("/jagg/jagg.jag");
+include("/jagg/constants.jag");
+
+
+var log= new Log();
+var response = {};
+var DEFAULT_TEMPLATE = 'DEFAULT_ALL_PERMISSIONS';
+
+(function () {
+	var result,
+	action = request.getParameter("action"),
+	mod = jagg.module("databases"),
+	site = require("/site/conf/site.json");
+    if (!jagg.getUser()) {
+        return;
+    }
+	if (action == "createDatabaseAndAttachUser") {
+		var databaseName = request.getParameter("databaseName");
+		var customPassword = request.getParameter("customPassword");
+        var userNameFromRequest = request.getParameter("userName");
+        var isBasic = request.getParameter("isBasic");
+
+        try{
+            var templateCreated = mod.createTemplateWithAllPermissions(DEFAULT_TEMPLATE);
+            var actualDBName = mod.createDatabase(databaseName);
+            if(actualDBName.indexOf('already exists') > -1){
+                print("database exists");
+            }
+
+            var userName;
+            if(isBasic === 'true'){
+                userName = mod.createDatabaseUser(userNameFromRequest, customPassword);
+                if(userName.indexOf('already exists') == -1) {
+                    isUserCreated = true;
+                }
+            }
+
+            var dbResult;
+            if(isBasic === 'true'){
+                dbResult = mod.attachNewUser(actualDBName, userName, DEFAULT_TEMPLATE);
+            } else {
+                dbResult = mod.attachNewUser(actualDBName, userNameFromRequest, DEFAULT_TEMPLATE);
+            }
+        }catch(e){
+            log.error(e);
+        }
+        var respObj = {};
+        respObj.actualDBName = actualDBName;
+        respObj.value = 'success';
+        respObj.userName = userName;
+        print(stringify(respObj));
+
+	}else if(action == "attachUserWithPermissions"){
+        var dbname = request.getParameter("databaseName");
+        var userName = request.getParameter("userName");
+        try {
+            result = mod.attachNewUser(dbname, userName, DEFAULT_TEMPLATE);
+            print(result);
+        } catch (e) {
+            var msg = "Error while attching user " + userName + " to the db : " + dbname;
+            log.error(msg);
+            log.error(e);
+            throw e;
+        }
+
+    }else if(action == "detachUser"){
+		var dbname = request.getParameter("databaseName");
+		var username = request.getParameter("username");
+		try {
+			result = mod.detachUser( dbname, username);
+			print(result);
+		} catch(e) {
+			throw "Error while reading the database";
+		}
+
+	}else if(action == "getDatabaseUsersForDataTable") {
+        var dbName = request.getParameter("dbName");
+        var resourceModule = jagg.module("databases");
+        var userInfoArray = [];
+        var unAttachedUsers = resourceModule.getAvailableUsersToAttachToDatabase(dbName);
+        var attachedUsers = resourceModule.getAttachedUsers(dbName);
+        for (var i in attachedUsers) {
+            var user = {};
+            user.username = "<a>" + attachedUsers[i] + "</a>";
+            user.attachuser = '<label class="switch"> <input id="chkbox_' + attachedUsers[i] + '" type="checkbox" checked><span class="toggle-button"></span></label>';
+            user.trash = "<a class='delete not-active' href='#'><i class='fw fw-delete'></i></a>";
+            userInfoArray.push(user);
+        }
+        for (var i in unAttachedUsers) {
+            var user = {};
+            user.username = "<a>" + unAttachedUsers[i] + "</a>";
+            user.attachuser = '<label class="switch"> <input id="chkbox_' + unAttachedUsers[i] + '" type="checkbox" ><span class="toggle-button"></span></label>';
+            user.trash = '<a class="delete delete_user" id="delete_' + unAttachedUsers[i] + '" href="#"><i class="fw fw-delete"></i></a>';
+            userInfoArray.push(user);
+        }
+        // Data table expects a object with the format {data : [{},{},{}.....]}
+        var userInfoArrayWithDataAtrribute = {};
+        userInfoArrayWithDataAtrribute.data = userInfoArray;
+        print(stringify(userInfoArrayWithDataAtrribute));
+    } else {
+		throw new Error("No action specified");
+	}
+}());
+%>

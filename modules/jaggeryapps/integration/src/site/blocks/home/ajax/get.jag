@@ -1,0 +1,54 @@
+<%
+/*
+ * Copyright (c) 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *   WSO2 Inc. licenses this file to you under the Apache License,
+ *   Version 2.0 (the "License"); you may not use this file except
+ *   in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing,
+ *   software distributed under the License is distributed on an
+ *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *   KIND, either express or implied.  See the License for the
+ *   specific language governing permissions and limitations
+ *   under the License.
+ */
+
+include("/jagg/jagg.jag");
+include("/jagg/constants.jag");
+(function () {
+    var result,
+            action = request.getParameter("action"),
+            applicationMod = jagg.module("application"),
+            site = require("/site/conf/site.json");
+    if (!jagg.getUser()) {
+        return;
+    }
+    if (action == "getAppIconUrl") {
+        var applicationName = request.getParameter("applicationName");
+        var selectedRevision = request.getParameter("selectedRevision");
+        var appIconUrl = getAppIconUrl(applicationName);
+        if (appIconUrl) {
+            print(appIconUrl);
+        } else {
+            response.status = 404;
+            response.content = "No app icon";
+        }
+
+    } else if(action == "putSelectedRevisionToSession"){
+        var applicationKey = request.getParameter("applicationKey");
+        var selectedRevision = request.getParameter("selectedRevision");
+        applicationMod.putSelectedRevisionToSession(applicationKey, selectedRevision)
+    } else {
+		throw new Error("No action specified");
+	}
+}());
+
+function getAppIconUrl(applicationName){
+    //TODO: check is app icon available
+    return null;
+}
+%>

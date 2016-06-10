@@ -1,0 +1,68 @@
+<%
+/*
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *   WSO2 Inc. licenses this file to you under the Apache License,
+ *   Version 2.0 (the "License"); you may not use this file except
+ *   in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing,
+ *   software distributed under the License is distributed on an
+ *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *   KIND, either express or implied.  See the License for the
+ *   specific language governing permissions and limitations
+ *   under the License.
+ */
+
+include("/jagg/jagg.jag");
+
+var log = new Log("module/runtimeLogs/runtimeLogs.jag");
+var modManager = jagg.module("manager");
+var Util = Packages.org.wso2.intcloud.core.Util;
+var ApplicationManager = Packages.org.wso2.appcloud.core.ApplicationManager;
+
+var getRuntimeLogs = function (applicationKey, selectedRevision, applicationType) {
+
+    var deploymentLog;
+    var applicationName = ApplicationManager.getApplicationNameByHashId(applicationKey);
+    var runtimeValidApplicationName = Util.getRuntimeValidAppName(applicationName);
+    var versionHashId = Util.getVersionHashId(applicationName, selectedRevision, modManager.getTenantId());
+
+    try {
+        var KubernetesRuntime = Packages.org.wso2.appcloud.provisioning.runtime.KubernetesRuntimeProvisioningService;
+        var KubernetesProvisioningUtils = Packages.org.wso2.appcloud.provisioning.runtime.Utils.KubernetesProvisioningUtils;
+        var applicationCtx = KubernetesProvisioningUtils.getApplicationContext(runtimeValidApplicationName, selectedRevision,
+                                                                               applicationType,
+                                                                               modManager.getTenantId(),
+                                                                               modManager.getTenantDomain(), versionHashId);
+        var kubService = new KubernetesRuntime(applicationCtx);
+        deploymentLog = kubService.getRuntimeLogs(null);
+    } catch(e){
+        log.error("Error while getting runtime logs for application : " + applicationName + " revision : " + selectedRevision);
+        log.error(e);
+        throw e;
+    }
+
+    return deploymentLog;
+}
+
+var getFormattedRuntimeLogs = function (applicationKey, selectedRevision, applicationType) {
+    var result = getRuntimeLogs(applicationKey, selectedRevision, applicationType);
+    var logMap = {};
+    if (result instanceof Packages.org.wso2.appcloud.provisioning.runtime.beans.DeploymentLogs){
+        var map = result.getDeploymentLogs();
+        if(map && map.entrySet()) {
+            var iterator = map.entrySet().iterator();
+            while (iterator.hasNext()) {
+                var entry = iterator.next();
+                logMap[entry.getKey()] = entry.getValue().toString();
+            }
+        }
+        return logMap;
+    } else {
+        throw "Error while calling mod.getRuntimeLogs. Results are not instances of DeploymentLogs";
+    }
+}

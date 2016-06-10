@@ -1,0 +1,22 @@
+{
+  "theme" : {
+    "base" : "default"
+  },
+  "context" : "/integration",
+  "cloudMgtContext" : "/cloudmgt",
+  "dashboardContext" : "/dashboard",
+  "recentAPIsCount" : 5,
+  "topRatedCount" : 5,
+  "defaultUser" : {
+    "username" : "admin",
+    "password" : "admin"
+  },
+  "distributable" : true,
+  "ssoConfiguration" : {
+    "issuer" : "intcloud",
+    "identityProviderURL" : "https://localhost:9444/samlsso",
+    "keyStorePassword": "wso2carbon",
+    "identityAlias" : "wso2carbon",
+    "keyStoreName" : "/Users/maheeka/ESB_WORK/CLOUD/APP_CLOUD/test_app/setup/wso2as-5.2.1/wso2as-5.2.1/repository/resources/security/wso2carbon.jks"
+  }
+}

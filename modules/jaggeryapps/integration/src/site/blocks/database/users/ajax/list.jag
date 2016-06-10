@@ -1,0 +1,92 @@
+<%
+/*
+ * Copyright (c) 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *   WSO2 Inc. licenses this file to you under the Apache License,
+ *   Version 2.0 (the "License"); you may not use this file except
+ *   in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing,
+ *   software distributed under the License is distributed on an
+ *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *   KIND, either express or implied.  See the License for the
+ *   specific language governing permissions and limitations
+ *   under the License.
+ */
+
+include("/jagg/jagg.jag");
+include("/jagg/constants.jag");
+
+var log= new Log();
+var result = {};
+
+(function () {
+	var mod, obj, result,
+	action = request.getParameter("action"),
+	site = require("/site/conf/site.json");
+    if (!jagg.getUser()) {
+        return;
+    }
+	if (action == "deleteUser") {
+		mod = jagg.module("databases");
+		var name = request.getParameter("name");
+        try {
+            mod.deleteUser(name);
+
+        } catch(e) {
+            throw "Error while deleting the database user. User might be already attached to a database.";
+        }
+        
+      
+	}else if (action == "createDatabaseUser") {
+	    mod = jagg.module("databases");
+		var password = request.getParameter("password");
+		var username = request.getParameter("username");
+
+        try {
+            var dbUser = mod.createDatabaseUser(username, password );
+            var result = {};
+            result.value = "success";
+            result.userName = dbUser;
+            print(stringify(result));
+        } catch(e) {
+            var msg = "Error while creating database user : " + username;
+            log.error(msg);
+            log.error(e);
+
+            var responseMsg = "Error while creating database user : " + username;
+            response.status=400;
+            // get the cause message from exception itself to make user friendly message
+            var errorMsg = new String(e.javaException.cause);
+            var actualCause = getActualCause(errorMsg);
+            // This is a hack to identify whether the error occurred due to an existing user
+            var alreadyExistsPattern = /already exists/ig;
+            if(alreadyExistsPattern.test(actualCause)){
+                responseMsg = "Database user '"+username+"' already exists"
+            }
+            response.content = responseMsg;
+        }
+	}  else {
+		throw new Error("No action specified");
+	}
+}());
+
+// The expected format of the received error is "java class name : cause of the error".
+// Get the actual cause from the string by splitting the error.
+// If error is out of expected format, show the error as it is.
+function getActualCause(errorMsg) {
+    if (errorMsg){
+        var errorMsgArray = errorMsg.split(':');
+        if (errorMsgArray.length > 1) {
+            return errorMsgArray[1];
+        } else {
+            return errorMsg;
+        }
+    }
+    return errorMsg;
+};
+
+%>

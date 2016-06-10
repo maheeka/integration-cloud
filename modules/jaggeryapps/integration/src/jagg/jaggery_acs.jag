@@ -1,0 +1,100 @@
+<!--
+ * Copyright (c) 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *   WSO2 Inc. licenses this file to you under the Apache License,
+ *   Version 2.0 (the "License"); you may not use this file except
+ *   in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing,
+ *   software distributed under the License is distributed on an
+ *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *   KIND, either express or implied.  See the License for the
+ *   specific language governing permissions and limitations
+ *   under the License.
+ -->
+<html>
+    <body>
+    Waiting for responses from identity server and validate response and forward to requested URI.
+        <%
+        include("/jagg/jagg.jag");
+        include("/jagg/constants.jag");
+        var log = new Log();
+(function () {
+
+    var samlResponse = request.getParameter("SAMLResponse");
+    var sessionId = session.getId();
+    var samlRequest = request.getParameter("SAMLRequest");
+
+    // create a sso relying party js object
+    include("/jagg/jagg.jag");
+    var site = require("/site/conf/site.json");
+    var security = require("sso");
+    var ssoRelyingParty = new security.SSORelyingParty(site.ssoConfiguration.issuer);
+    var isLogoutResponse = false;
+    var isLogoutRequest = false;
+
+    // if saml response is not a log out response
+    if (samlResponse != null) {
+        isLogoutResponse = ssoRelyingParty.isLogoutResponse(samlResponse);
+        if (!Boolean(isLogoutResponse)) {
+            // relay state value should be a valid value, this value is mapped with request uri.
+            var relayState = request.getParameter("RelayState");
+            var requestedURI = ssoRelyingParty.getRelayStateProperty(relayState);
+            if (requestedURI == null) {
+                log.error("Relaystate value is invalid.");
+                response.sendRedirect("../error.jag");
+                return;
+            }
+
+            // validating the signature
+            var isSignatureValid = ssoRelyingParty.validateSignature(samlResponse);
+            if (!Boolean(isSignatureValid)) {
+                log.error("SAML response signature is verification failed.");
+                response.sendRedirect("../error.jag");
+                return;
+            }
+            samlResponse = samlResponse.replace('<?xml version="1.0" encoding="UTF-8"?>', "");
+            ssoRelyingParty.setSessionAuthenticated(sessionId, samlResponse);
+            var userName = ssoRelyingParty.getLoggedInUser(sessionId);
+            var modManager = jagg.module("manager");
+            var permission = modManager.getPropertyValue(LOGIN_PERMISSION);
+            var isUserAuthorized = modManager.checkAuthorizationForUser(userName, permission);
+            if(isUserAuthorized){
+                jagg.setUser(userName);
+                var email = modManager.getEmailAddressForUser(userName);
+                modManager.setUserEmailAddress(email);
+                session.put("LOGGED_IN_USER", ssoRelyingParty.getLoggedInUser(sessionId));
+                response.sendRedirect("/integration/site/pages/index.jag");
+            } else {
+                response.sendRedirect("/integration/site/pages/error-pages/401.html");
+            }
+            return;
+        } else {
+            // if the saml response is log out request from IDP, we log out from web app.
+            ssoRelyingParty.invalidateSessionBySessionId(sessionId);
+            session.invalidate();
+            response.sendRedirect("../");
+            return;
+        }
+
+    }
+
+    // if saml request is a log out request, then invalidate session.
+    if (samlRequest != null) {
+        isLogoutRequest = ssoRelyingParty.isLogoutRequest(samlRequest);
+        if (Boolean(isLogoutRequest)) {
+            ssoRelyingParty.invalidateSessionBySAMLResponse(samlRequest);
+            session.invalidate();
+        }
+    }
+
+
+}());
+
+%>
+
+</body>
+</html>

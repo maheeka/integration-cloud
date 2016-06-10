@@ -1,0 +1,36 @@
+<%
+include("/jagg/jagg.jag");
+include("/jagg/constants.jag");
+
+jagg.block("header/default", {
+
+    initialize: function (data) {
+
+    },
+    getInputs: function () {
+
+    },
+    getOutputs: function (inputs) {
+        var user = jagg.getUser();
+        var manager = jagg.module("manager");
+        var userEmailAddress = manager.getEmailAddressForUser(user);
+        var loggedInUserName;
+        if (userEmailAddress == null) {
+            loggedInUserName = user;
+        } else {
+            loggedInUserName = userEmailAddress;
+        }
+        var tenantDomain = manager.getTenantDomain(true);
+        var docUrl = manager.getPropertyValue(DOCUMENTATION_REDIRECTION_URL);
+        var supportUrl = manager.getPropertyValue(SUPPORT_REDIRECTION_URL);
+
+        return {
+            "user": user,
+            "loggedInUserName": loggedInUserName,
+            "tenantDomain": tenantDomain,
+            "docUrl": docUrl,
+            "supportUrl": supportUrl
+        };
+    }
+});
+%>

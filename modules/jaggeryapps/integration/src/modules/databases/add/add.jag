@@ -1,0 +1,319 @@
+<%
+/*
+ * Copyright (c) 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *   WSO2 Inc. licenses this file to you under the Apache License,
+ *   Version 2.0 (the "License"); you may not use this file except
+ *   in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing,
+ *   software distributed under the License is distributed on an
+ *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *   KIND, either express or implied.  See the License for the
+ *   specific language governing permissions and limitations
+ *   under the License.
+ */
+
+include("/jagg/jagg.jag");
+include("/jagg/constants.jag");
+
+var log = new Log('modules/databases/add/add.jag');
+
+var modManager = jagg.module("manager");
+var wso2_rss_instanceName = 'SYSTEM';
+var storageServerURL = modManager.getPropertyValue(PROPERTY_STORAGE_SERVER_URL);
+var environmentName = modManager.getPropertyValue(PROPERTY_RSS_ENVIRONMENT_NAME);
+
+/**
+ * Create database
+ * @param databaseName - name of the database
+ * @return name of the database.
+ */
+var createDatabase = function (databaseName) {
+	var ws = require('ws');
+	var createDatabaseService = new ws.WSRequest();
+	var options =new Array();
+	options.useSOAP = 1.2;
+	options.action = "urn:addDatabase";
+	options.robust = true;
+	var result="";
+
+	var payload ='<ser:addDatabase xmlns:ser="http://service.core.rssmanager.carbon.wso2.org" ' +
+	'xmlns:xsd="http://dto.core.rssmanager.carbon.wso2.org/xsd">'+
+	'<ser:environmentName>' + environmentName + '</ser:environmentName>' +
+	'<ser:database>'+
+	'<xsd:name>'+ databaseName +'</xsd:name>'+
+	'<xsd:rssInstanceName>'+ wso2_rss_instanceName +'</xsd:rssInstanceName>'+
+	'</ser:database>'+
+	'</ser:addDatabase>';
+	
+
+	try {
+		modManager.setAuthHeaders(options);
+		createDatabaseService.open(options, storageServerURL+"RSSAdmin", false);
+		createDatabaseService.send(payload);
+		result = createDatabaseService.responseE4X;
+		var ns = new Namespace("http://service.core.rssmanager.carbon.wso2.org");
+		var response=result.ns::["return"];
+		var entry = response[0];
+		var ax = new Namespace("http://dto.core.rssmanager.carbon.wso2.org/xsd");
+		result=entry.ax::["name"].text();
+        return result;
+
+	} catch (e) {
+
+		log.error("Error while creating database : " + databaseName);
+		log.error(e);
+		throw e;
+	}
+
+};
+
+
+var getAttachedUsers = function (dbname){
+	var ws = require('ws');
+	var getAttachedUsersService = new ws.WSRequest();
+	var options = new Array();
+	options.useSOAP = 1.2;
+	options.action = "urn:getAttachedUsers";
+	var payload ='<ser:getAttachedUsers xmlns:ser="http://service.core.rssmanager.carbon.wso2.org" xmlns:xsd="http://dto.core.rssmanager.carbon.wso2.org/xsd">'+
+	'<ser:environmentName>' + environmentName + '</ser:environmentName>' +
+	'<ser:rssInstanceName>' + wso2_rss_instanceName + '</ser:rssInstanceName>' +
+	'<ser:databaseName>'+dbname+'</ser:databaseName>'+
+	'</ser:getAttachedUsers>';
+	
+	var result;
+	modManager.setAuthHeaders(options);
+	try {
+		getAttachedUsersService.open(options, storageServerURL+'RSSAdmin', false );
+		getAttachedUsersService.send(payload);
+		result = getAttachedUsersService.responseE4X;
+	} catch (e) {
+		log.error("Error while getting attached users for database : " + dbname);
+		log.error(e);
+		throw e;
+	}
+	return getUserList(result);
+};
+
+var attachNewUser = function (dbname, user, template){
+	var ws = require('ws');
+	var attachUserService = new ws.WSRequest();
+	var options = new Array();
+	options.useSOAP = 1.2;
+	options.action = "urn:attachUser";
+	options.mep = "in-only";
+	options.robust = true;
+
+	var payload ='<ser:attachUser  xmlns:ser="http://service.core.rssmanager.carbon.wso2.org" xmlns:xsd="http://dto.core.rssmanager.carbon.wso2.org/xsd">'+
+	'<ser:environmentName>' + environmentName + '</ser:environmentName>' +
+	'<ser:ude>' +
+        '<xsd:databaseName>'+dbname+'</xsd:databaseName>'+     
+        '<xsd:rssInstanceName>' + wso2_rss_instanceName + '</xsd:rssInstanceName>' +
+	'<xsd:username>'+user+'</xsd:username>'+
+	'</ser:ude>' +
+	'<ser:templateName>'+template+'</ser:templateName>' +
+    '</ser:attachUser>';
+
+	var result="";
+
+	modManager.setAuthHeaders(options);
+	try {
+
+		attachUserService.open(options, storageServerURL+'RSSAdmin', false);
+		attachUserService.send(payload);
+		result = "success";
+        return result;
+	} catch (e) {
+		log.error("Error while attaching new user : " + user + " with template : " + template + " to database : "
+				  + dbname );
+		log.error(e);
+		throw e;
+	}
+};
+
+
+var detachUser = function (dbname, username){
+	var ws = require('ws');
+	var detachUserService = new ws.WSRequest();
+	var options = new Array();
+	options.useSOAP = 1.2;
+	options.action = "urn:detachUser";
+	options.mep = "in-only";
+	var payload ='<ser:detachUser xmlns:ser="http://service.core.rssmanager.carbon.wso2.org" xmlns:xsd="http://dto.core.rssmanager.carbon.wso2.org/xsd">'+
+	'<ser:environmentName>' + environmentName + '</ser:environmentName>' +
+        '<ser:ude>' +
+	'<xsd:databaseName>'+dbname+'</xsd:databaseName>'+
+	'<xsd:rssInstanceName>' + wso2_rss_instanceName + '</xsd:rssInstanceName>' +
+	'<xsd:username>'+username+'</xsd:username>'+
+        '</ser:ude>' +
+	'</ser:detachUser>';
+	
+	var result;
+
+	modManager.setAuthHeaders(options);
+	try {
+
+		detachUserService.open(options, storageServerURL+'RSSAdmin', false);
+		detachUserService.send(payload);
+		result = true;//since detachUserService.responseE4X is null;
+
+	} catch (e) {
+		log.error("Error while detaching user : " + username + " from database : " + dbname );
+		log.error(e);
+		throw e;
+	}
+	return result;
+};
+
+
+
+
+var getDatabases = function (){
+	var ws = require('ws');
+	var getDatabaseService = new ws.WSRequest();
+    var options = new Array();
+    options.useSOAP = 1.2;
+    options.action = "urn:getDatabases";
+    modManager.setAuthHeaders(options);
+
+    var payload = '<ser:getDatabases  xmlns:ser="http://service.core.rssmanager.carbon.wso2.org">' +
+            '<ser:environmentName>' + environmentName + '</ser:environmentName>' +
+            '</ser:getDatabases>';
+
+    var result;
+    try {
+        getDatabaseService.open(options, storageServerURL + 'RSSAdmin', false);
+        getDatabaseService.send(payload);
+        result = getDatabaseService.responseE4X;
+    } catch (e) {
+        log.error("Error while retrieving all the databases");
+        log.error(e);
+        throw e;
+    }
+    return buildResponse(result);
+};
+
+
+
+function buildResponse(result){
+	var databaseObject=[];
+
+	if(result != undefined){
+		var response=result.*::["return"]
+		for(var index=0; index < response.length();index++){
+			var task={
+			};
+			var entry=response[index];
+			var name=entry.*::name.text();
+			var rssInstanceName=entry.*::rssInstanceName.text();
+			var url=entry.*::url.text();
+			task.dbName=name;
+			task.rssInstanceName="";
+			task.url = url;
+			databaseObject.push(task);
+		}
+	}
+	return databaseObject;
+}
+
+function getUserList(result){
+	var databaseObject=[];
+	if(result != undefined){
+		var ns = new Namespace("http://service.core.rssmanager.carbon.wso2.org");
+		var response=result.ns::["return"];
+		for(var index=0; index < response.length();index++){
+			var entry = response[index];
+			var ax = new Namespace("http://dto.core.rssmanager.carbon.wso2.org/xsd");
+			var username=entry.ax::["username"].text();
+			databaseObject.push(username);
+		}
+	}
+	return databaseObject;
+}
+
+
+/**
+ * Generate json object array to insert to the datatable in databases page
+*/
+var generateDatabaseInfoForDataTable = function () {
+    var allDBInfo = [];
+    try {
+        var allDatabases = getDatabases();
+        for (var j in allDatabases) {
+            var singleDatabaseInfo = allDatabases[j];
+            singleDatabaseInfo.database_url = singleDatabaseInfo.url;
+            singleDatabaseInfo.notActive = 'false';
+            // currently we dont record database type, support only MySQL.change this when multiple types are allowed
+            singleDatabaseInfo.type = "MySQL";
+            var attachedUsersArray = getAttachedUsers(singleDatabaseInfo.dbName);
+            log.info(attachedUsersArray);
+            var attachedUsersString = "";
+            for (var k in attachedUsersArray) {
+                if (k > 0) {
+                    attachedUsersString = ", " + attachedUsersString;
+                }
+                attachedUsersString = attachedUsersArray[k] + attachedUsersString;
+            }
+            singleDatabaseInfo.attachedUsers = attachedUsersString;
+            allDBInfo.push(singleDatabaseInfo);
+        }
+    } catch(e){
+        log.error("Error while generating database info table");
+        log.error(e);
+        throw e;
+    }
+    var jsonWithDataAttribute = {};
+    jsonWithDataAttribute.data = allDBInfo;
+    return stringify(jsonWithDataAttribute);
+};
+
+
+var getAllDatabasesInfo = function () {
+    var allDBInfo = [];
+    try {
+        var allDatabases = getDatabases();
+        for (var j in allDatabases) {
+            var singleDatabaseInfo = allDatabases[j];
+            var singleDatabaseObj = {};
+            singleDatabaseObj.id = singleDatabaseInfo.dbName;
+            singleDatabaseObj.text = singleDatabaseInfo.dbName;
+            singleDatabaseObj.isNextLevel = true;
+            singleDatabaseObj.data = [];
+            var dbName = {}
+            dbName.text = "Name";
+            dbName.id = singleDatabaseInfo.dbName;
+            dbName.isNextLevel = false;
+            singleDatabaseObj.data.push(dbName);
+            url = {};
+            url.text = "URL";
+            url.id = singleDatabaseInfo.url;
+            url.isNextLevel = false;
+            singleDatabaseObj.data.push(url);
+            var attachedUsersArray = getAttachedUsers(singleDatabaseInfo.dbName);
+            var users = {};
+            users.id = "users";
+            users.text = "Users";
+            users.isNextLevel = true;
+            users.data = [];
+            for (var k in attachedUsersArray) {
+                var user = {}
+                user.text = attachedUsersArray[k];
+                user.id = attachedUsersArray[k];
+                users.data.push(user);
+            }
+            singleDatabaseObj.data.push(users);
+            allDBInfo.push(singleDatabaseObj);
+        }
+    } catch(e){
+        log.error("Error while generating database info table");
+        log.error(e);
+        throw e;
+    }
+    return stringify(allDBInfo);
+};
+
+%>
