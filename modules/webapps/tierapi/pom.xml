@@ -12,7 +12,7 @@
     <artifactId>tierapi</artifactId>
     <packaging>war</packaging>
     <version>0.0.1-SNAPSHOT</version>
-    <name>tierapi</name>
+    <name>WSO2 Integration Cloud Components - Tier Management API</name>
 
     <build>
         <finalName>tierapi</finalName>
