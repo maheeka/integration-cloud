@@ -264,13 +264,10 @@
     </build>
 
     <modules>
-        <module>modules/components/org.wso2.appcloud.common</module>
-        <module>modules/components/org.wso2.appcloud.core</module>
-        <module>modules/components/org.wso2.appcloud.provisioning.runtime</module>
         <module>modules/components/org.wso2.intcloud.common</module>
         <module>modules/components/org.wso2.intcloud.core</module>
-        <module>modules/jaggeryapps/appmgt</module>
-        <module>modules/webapps/appCloudTierapi</module>
+        <!--<module>modules/jaggeryapps/appmgt</module>-->
+        <module>modules/webapps/tierapi</module>
         <module>modules/services/org.wso2.intcloud.services.tenant.carbonapps.deployer</module>
         <module>modules/services/org.wso2.intcloud.services.tenant.carbonapps.undeployer</module>
         <module>modules/services/org.wso2.intcloud.services.tenant.templates</module>
@@ -279,8 +276,6 @@
         <module>modules/service-stubs/org.wso2.intcloud.services.tenant.carbonapps.undeployer.stub</module>
         <module>modules/service-stubs/org.wso2.intcloud.services.tenant.templates.stub</module>
         <module>modules/service-stubs/org.wso2.intcloud.services.tenant.tasks.stub</module>
-        
-        <!--module>modules/integreation/integration-tests</module-->
     </modules>
 
     <repositories>
