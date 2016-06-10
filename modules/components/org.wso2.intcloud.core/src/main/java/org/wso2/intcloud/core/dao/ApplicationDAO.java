@@ -631,6 +631,36 @@ public class ApplicationDAO {
         return hashIdList;
     }
 
+    public List<String> getAllApplicationsUsingCarbonApplication(int tenantId, Connection dbConnection, String applicationHashId)
+            throws IntCloudException {
+
+        PreparedStatement preparedStatement = null;
+        ArrayList<String> hashIdList = new ArrayList<>();
+        ResultSet resultSet = null;
+
+        try {
+            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.GET_APPLICATIONS_USING_CARBON_APPLICATION_IN_TENANT);
+            preparedStatement.setString(1, applicationHashId);
+            preparedStatement.setString(2, String.valueOf(tenantId));
+
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()){
+                hashIdList.add(resultSet.getString(SQLQueryConstants.HASH_ID));
+            }
+
+        } catch (SQLException e) {
+            String msg = "Error while getting the list of version hash ids of application : " + applicationHashId;
+            log.error(msg, e);
+            throw new IntCloudException(msg, e);
+        } finally {
+            DBUtil.closeResultSet(resultSet);
+            DBUtil.closePreparedStatement(preparedStatement);
+        }
+
+        return hashIdList;
+    }
+
     public String getCarbonApplicationNameOfApplication(Connection dbConnection, String applicationHashId)
             throws IntCloudException {
 

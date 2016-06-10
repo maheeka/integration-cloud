@@ -58,6 +58,22 @@
             <artifactId>json</artifactId>
             <version>3.0.0.wso2v1</version>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.appcloud</groupId>
+            <artifactId>org.wso2.intcloud.services.tenant.carbonapps.deployer.stub</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.appcloud</groupId>
+            <artifactId>org.wso2.intcloud.services.tenant.carbonapps.undeployer.stub</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.appcloud</groupId>
+            <artifactId>org.wso2.intcloud.services.tenant.templates.stub</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.appcloud</groupId>
+            <artifactId>org.wso2.intcloud.services.tenant.tasks.stub</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -75,6 +91,7 @@
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Export-Package>
                             org.wso2.intcloud.core.*,
+                            org.wso2.intcloud.services.tenantcappuploader.stub.*,
                         </Export-Package>
                         <Private-Package>
                             org.wso2.intcloud.core.internal.*,
