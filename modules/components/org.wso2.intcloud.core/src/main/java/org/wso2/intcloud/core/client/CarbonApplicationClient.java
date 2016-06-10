@@ -30,8 +30,8 @@ import org.wso2.carbon.application.mgt.stub.upload.CarbonAppUploaderStub;
 import org.wso2.carbon.application.mgt.stub.upload.types.carbon.UploadedFileItem;
 import org.wso2.intcloud.common.IntCloudException;
 import org.wso2.intcloud.common.util.IntCloudUtil;
-import org.wso2.intcloud.services.tenantcappuploader.stub.types.TenantCarbonAppUploaderRegistryExceptionException;
-import org.wso2.intcloud.services.tenantcappuploader.stub.types.TenantCarbonAppUploaderStub;
+import org.wso2.intcloud.services.tenant.carbonapps.stub.types.TenantCarbonAppAdminServiceRegistryExceptionException;
+import org.wso2.intcloud.services.tenant.carbonapps.stub.types.TenantCarbonAppAdminServiceStub;
 
 import javax.activation.DataHandler;
 import java.io.File;
@@ -48,7 +48,7 @@ public class CarbonApplicationClient {
 
     CarbonAppUploaderStub cAppUploaderStub = null;
     ApplicationAdminStub appAdminStub = null;
-    TenantCarbonAppUploaderStub tenantCAppUploaderStub = null;
+    TenantCarbonAppAdminServiceStub tenantCAppStub = null;
 
     int MAX_TIME = 200000;
 
@@ -58,8 +58,8 @@ public class CarbonApplicationClient {
 
             appAdminStub = new ApplicationAdminStub(IntCloudUtil.getPropertyValue("ApplicationAdminService"));
 
-            tenantCAppUploaderStub =
-                    new TenantCarbonAppUploaderStub(IntCloudUtil.getPropertyValue("TenantCarbonAppUploaderService"));
+            tenantCAppStub =
+                    new TenantCarbonAppAdminServiceStub(IntCloudUtil.getPropertyValue("TenantCarbonAppAdminService"));
 
         } catch (AxisFault axisFault) {
             throw new IntCloudException(axisFault.getMessage(), axisFault);
@@ -83,7 +83,7 @@ public class CarbonApplicationClient {
                 .setProperty(org.apache.axis2.transport.http.HTTPConstants.AUTHENTICATE, authenticatorAppAdmin);
         clientAppAdmin.setOptions(client_optionsAppAdmin);
 
-        ServiceClient clientTenantCAppAdmin = tenantCAppUploaderStub._getServiceClient();
+        ServiceClient clientTenantCAppAdmin = tenantCAppStub._getServiceClient();
         Options client_optionsTenantCAppAdmin = clientTenantCAppAdmin.getOptions();
         HttpTransportProperties.Authenticator authenticatorTenantCAppAdmin =
                 new HttpTransportProperties.Authenticator();
@@ -113,13 +113,13 @@ public class CarbonApplicationClient {
                  "' to tenant " + tenantId);
 
         try {
-            tenantCAppUploaderStub.uploadCarbonApplication(carbonApplicationName, carbonApplicationPath, tenantId);
+            tenantCAppStub.uploadCarbonApplicationToRegistry(tenantId, carbonApplicationName, carbonApplicationPath);
 
-            tenantCAppUploaderStub.deployCarbonApplication(carbonApplicationName, tenantId);
+            tenantCAppStub.deployCarbonApplication(tenantId, carbonApplicationName);
 
-            tenantCAppUploaderStub.removeCarbonApplication(carbonApplicationName, tenantId);
+            tenantCAppStub.removeCarbonApplicationInRegistry(tenantId, carbonApplicationName);
 
-        } catch (RemoteException | TenantCarbonAppUploaderRegistryExceptionException e) {
+        } catch (RemoteException | TenantCarbonAppAdminServiceRegistryExceptionException e) {
             throw new IntCloudException(e.getMessage(), e);
         }
     }

@@ -14,19 +14,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.intcloud.services.tenantcappuploader.internal;
+package org.wso2.intcloud.services.tenant.carbonapps.deployer.internal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.registry.core.service.RegistryService;
-import org.wso2.intcloud.services.tenantcappuploader.Util;
 import org.wso2.carbon.user.core.service.RealmService;
+import org.wso2.intcloud.services.tenant.carbonapps.deployer.Util;
 
 /**
- * The Declarative Service Component for the Sample Installer Module for Stratos.
+ * The Declarative Service Component Carbon App Deployer in Tenant Mode
  *
- * @scr.component name="org.wso2.intcloud.services.tenantcappuploader" immediate="true"
+ * @scr.component name="org.wso2.intcloud.services.tenant.carbonapps.deployer" immediate="true"
  * @scr.reference name="registry.service"
  * interface="org.wso2.carbon.registry.core.service.RegistryService"
  * cardinality="1..1" policy="dynamic" bind="setRegistryService" unbind="unsetRegistryService"
@@ -35,8 +35,7 @@ import org.wso2.carbon.user.core.service.RealmService;
  * cardinality="1..1" policy="dynamic" bind="setRealmService"
  * unbind="unsetRealmService"
  */
-@SuppressWarnings({"JavaDoc", "unused"})
-public class TenantCarbonServiceComponent {
+@SuppressWarnings({ "JavaDoc", "unused" }) public class TenantCarbonServiceComponent {
 
     private static final Log log = LogFactory.getLog(TenantCarbonServiceComponent.class);
 
@@ -91,7 +90,7 @@ public class TenantCarbonServiceComponent {
         Util.setRealmService(realmService);
     }
 
-    protected void unsetRealmService(RealmService realmService  ) {
+    protected void unsetRealmService(RealmService realmService) {
         Util.setRealmService(null);
     }
 
