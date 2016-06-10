@@ -47,6 +47,7 @@ public class TenantTaskAdminService extends CarbonTaskManagementService {
 
     public boolean deleteTaskDescriptionInTenant(int tenantId, String name, String group)
             throws TaskManagementException {
+        log.info("Deleting task " + name);
         try {
             PrivilegedCarbonContext.startTenantFlow();
             PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId, true);
