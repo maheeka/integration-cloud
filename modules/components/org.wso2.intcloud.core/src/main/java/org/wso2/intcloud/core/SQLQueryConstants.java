@@ -115,6 +115,9 @@ public class SQLQueryConstants {
     public static final String GET_APPLICATIONS_USING_CARBON_APPLICATION =
             "SELECT hash_id FROM AC_APPLICATION WHERE capp_name=?";
 
+    public static final String GET_APPLICATIONS_USING_CARBON_APPLICATION_IN_TENANT =
+            "SELECT hash_id FROM AC_APPLICATION WHERE capp_name=? AND tenant_id=?";
+
     public static final String GET_CARBON_APPLICATION_NAME_OF_APPLICATION =
             "SELECT capp_name FROM AC_APPLICATION WHERE hash_id=?";
 

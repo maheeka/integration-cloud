@@ -57,6 +57,10 @@ public class ESBClient {
         CarbonApplicationClient.getInstance().unDeployCarbonApp(carbonApplicationName);
     }
 
+    public void unDeployCarbonApp(int tenantId, String carbonApplicationName) throws IntCloudException {
+        CarbonApplicationClient.getInstance().unDeployCarbonApp(tenantId, carbonApplicationName);
+    }
+
     public String getIntegrationParamConfiguration(String carbonApplicationName) throws IntCloudException {
         return SequenceTemplateClient.getInstance().getSequenceTemplate(carbonApplicationName);
     }

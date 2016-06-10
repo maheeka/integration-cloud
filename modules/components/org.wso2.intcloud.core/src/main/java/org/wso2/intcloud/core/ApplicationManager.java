@@ -217,6 +217,19 @@ public class ApplicationManager {
         }
     }
 
+    public static List<String> getAllApplicationsUsingCarbonApplication(int tenantId, String carbonApplicationName)
+            throws IntCloudException {
+
+        ApplicationDAO applicationDAO = new ApplicationDAO();
+        Connection dbConnection = DBUtil.getDBConnection();
+
+        try {
+            return applicationDAO.getAllApplicationsUsingCarbonApplication(tenantId, dbConnection, carbonApplicationName);
+        } finally {
+            DBUtil.closeConnection(dbConnection);
+        }
+    }
+
     public static String getCarbonApplicationNameOfApplication(String applicationHashId) throws IntCloudException {
 
         ApplicationDAO applicationDAO = new ApplicationDAO();

@@ -60,7 +60,11 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.appcloud</groupId>
-            <artifactId>org.wso2.intcloud.services.tenant.carbonapps.stub</artifactId>
+            <artifactId>org.wso2.intcloud.services.tenant.carbonapps.deployer.stub</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.appcloud</groupId>
+            <artifactId>org.wso2.intcloud.services.tenant.carbonapps.undeployer.stub</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.appcloud</groupId>
