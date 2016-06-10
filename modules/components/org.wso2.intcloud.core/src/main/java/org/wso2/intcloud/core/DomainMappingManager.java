@@ -23,7 +23,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.appcloud.common.AppCloudException;
+import org.wso2.intcloud.common.IntCloudException;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -52,9 +52,9 @@ public class DomainMappingManager {
      * @param pointedUrl url that is pointed by the CNAME entry of {@code customUrl}
      * @param customUrl  custom url.
      * @return success whether there is a CNAME entry from {@code customUrl} to {@code pointedUrl}
-     * @throws AppCloudException
+     * @throws IntCloudException
      */
-    public boolean verifyCustomUrlByCname(String pointedUrl, String customUrl) throws AppCloudException {
+    public boolean verifyCustomUrlByCname(String pointedUrl, String customUrl) throws IntCloudException {
         Hashtable<String, String> env = new Hashtable<String, String>();
         boolean success;
         // set environment configurations
@@ -75,9 +75,9 @@ public class DomainMappingManager {
                 }
                 success = false;
             }
-        } catch (AppCloudException e) {
+        } catch (IntCloudException e) {
             log.error("Error occurred while resolving dns for: " + customUrl, e);
-            throw new AppCloudException("Error occurred while resolving dns for: " + customUrl, e);
+            throw new IntCloudException("Error occurred while resolving dns for: " + customUrl, e);
         } catch (NamingException e) {
             // we are logging this as warn messages since this is caused, due to an user error. For example if the
             // user entered a rubbish custom url(Or a url which is, CNAME record is not propagated at the
@@ -96,10 +96,10 @@ public class DomainMappingManager {
      * @param environmentConfigs environment configuration
      * @return {@link com.google.common.collect.Multimap} of resolved dns entries. This {@link com.google.common.collect.Multimap} will contain the resolved
      * "CNAME" and "A" records from the given {@code hostname}
-     * @throws AppCloudException if error occurred while the operation
+     * @throws IntCloudException if error occurred while the operation
      */
     public Multimap<String, String> resolveDNS(String domain, Hashtable<String, String> environmentConfigs)
-            throws AppCloudException, NamingException {
+            throws IntCloudException, NamingException {
         // result mutimap of dns records. Contains the cname and records resolved by the given hostname
         // ex:  CNAME   => foo.com,bar.com
         //      A       => 192.1.2.3 , 192.3.4.5
@@ -119,7 +119,7 @@ public class DomainMappingManager {
             String msg = "DNS validation: DNS query failed for: " + domain + ". Error occurred while configuring " +
                     "directory context.";
             log.error(msg, e);
-            throw new AppCloudException(msg, e);
+            throw new IntCloudException(msg, e);
         }
 
         try {
