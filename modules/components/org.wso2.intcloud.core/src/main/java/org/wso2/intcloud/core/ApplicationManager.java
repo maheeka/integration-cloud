@@ -224,7 +224,8 @@ public class ApplicationManager {
         Connection dbConnection = DBUtil.getDBConnection();
 
         try {
-            return applicationDAO.getAllApplicationsUsingCarbonApplication(tenantId, dbConnection, carbonApplicationName);
+            return applicationDAO.getAllApplicationsUsingCarbonApplication(tenantId, dbConnection,
+                                                                           carbonApplicationName);
         } finally {
             DBUtil.closeConnection(dbConnection);
         }
@@ -237,6 +238,17 @@ public class ApplicationManager {
 
         try {
             return applicationDAO.getCarbonApplicationNameOfApplication(dbConnection, applicationHashId);
+        } finally {
+            DBUtil.closeConnection(dbConnection);
+        }
+    }
+
+    public static String getTaskConfigurationOfApplication(String applicationHashId) throws IntCloudException {
+        ApplicationDAO applicationDAO = new ApplicationDAO();
+        Connection dbConnection = DBUtil.getDBConnection();
+
+        try {
+            return applicationDAO.getTaskConfigurationOfApplication(dbConnection, applicationHashId);
         } finally {
             DBUtil.closeConnection(dbConnection);
         }

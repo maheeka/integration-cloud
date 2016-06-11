@@ -339,7 +339,8 @@ public class ApplicationDAO {
 
         try {
 
-            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.ADD_CONTAINER, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.ADD_CONTAINER,
+                                                              Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, container.getImageName());
             preparedStatement.setString(2, container.getImageVersion());
             preparedStatement.setInt(3, deploymentId);
@@ -691,13 +692,44 @@ public class ApplicationDAO {
         return cAppName;
     }
 
+    public String getTaskConfigurationOfApplication(Connection dbConnection, String applicationHashId)
+            throws IntCloudException {
+
+        PreparedStatement preparedStatement = null;
+        String taskConfiguration = null;
+        ResultSet resultSet = null;
+
+        try {
+            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.GET_TASK_CONFIGURATION_OF_APPLICATION);
+            preparedStatement.setString(1, applicationHashId);
+
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                taskConfiguration = (resultSet.getString(SQLQueryConstants.TASK_CONFIGURATION));
+                return taskConfiguration;
+            }
+
+        } catch (SQLException e) {
+            String msg = "Error while getting the task configuration of application : " + applicationHashId;
+            log.error(msg, e);
+            throw new IntCloudException(msg, e);
+        } finally {
+            DBUtil.closeResultSet(resultSet);
+            DBUtil.closePreparedStatement(preparedStatement);
+        }
+
+        return taskConfiguration;
+    }
+
     public boolean isSingleVersion(Connection dbConnection, String versionHashId) throws IntCloudException {
 
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
         try {
-            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.GET_VERSION_HASH_IDS_OF_APPLICATION_BY_VERSION_HASH_ID);
+            preparedStatement = dbConnection.prepareStatement(
+                    SQLQueryConstants.GET_VERSION_HASH_IDS_OF_APPLICATION_BY_VERSION_HASH_ID);
             preparedStatement.setString(1, versionHashId);
 
             resultSet = preparedStatement.executeQuery();
