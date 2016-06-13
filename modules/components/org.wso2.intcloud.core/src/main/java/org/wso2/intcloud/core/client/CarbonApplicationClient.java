@@ -30,8 +30,6 @@ import org.wso2.carbon.application.mgt.stub.upload.CarbonAppUploaderStub;
 import org.wso2.carbon.application.mgt.stub.upload.types.carbon.UploadedFileItem;
 import org.wso2.intcloud.common.IntCloudException;
 import org.wso2.intcloud.common.util.IntCloudUtil;
-import org.wso2.intcloud.services.tenant.carbonapps.deployer.stub.types
-        .TenantCarbonAppDeployerAdminServiceRegistryExceptionException;
 import org.wso2.intcloud.services.tenant.carbonapps.deployer.stub.types.TenantCarbonAppDeployerAdminServiceStub;
 import org.wso2.intcloud.services.tenant.carbonapps.undeployer.stub.types
         .TenantCarbonAppUnDeployerAdminServiceExceptionException;
@@ -133,7 +131,7 @@ public class CarbonApplicationClient {
 
         try {
             tenantCAppDeployerStub.deployCarbonApplication(tenantId, carbonApplicationName, carbonApplicationPath);
-        } catch (RemoteException | TenantCarbonAppDeployerAdminServiceRegistryExceptionException e) {
+        } catch (RemoteException e) {
             throw new IntCloudException(e.getMessage(), e);
         }
 

@@ -17,138 +17,60 @@
 
 package org.wso2.intcloud.services.tenant.carbonapps.deployer;
 
-import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axis2.AxisFault;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.application.upload.CarbonAppUploader;
 import org.wso2.carbon.application.upload.UploadedFileItem;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
-import org.wso2.carbon.context.RegistryType;
-import org.wso2.carbon.registry.core.Registry;
-import org.wso2.carbon.registry.core.Resource;
-import org.wso2.carbon.registry.core.exceptions.RegistryException;
-import org.wso2.carbon.registry.core.utils.RegistryClientUtils;
 
 import javax.activation.DataHandler;
 import java.io.File;
+import java.io.IOException;
 
 public class TenantCarbonAppDeployer extends CarbonAppUploader {
 
     private static final Log log = LogFactory.getLog(TenantCarbonAppDeployer.class);
 
-    private static final String REGISTRY_CAPP_LOCATION = "/cAppTemps/";
-
     /**
      * Fetches a sample from the registry and deploys it as a CarbonApp
      *
-     * @param tenantId tenant id
+     * @param tenantId              tenant id
      * @param carbonApplicationName Name of the carbon application
      * @return true if the operation successfully completed.
-     * @throws AxisFault         Thrown if and error occurs while uploading the sample
-     * @throws RegistryException Thrown if an error occurs while accessing the Registry
+     * @throws AxisFault Thrown if and error occurs while uploading the sample
      */
     public boolean deployCarbonApplication(int tenantId, String carbonApplicationName, String carbonApplicationPath)
-            throws AxisFault, RegistryException {
+            throws AxisFault {
         try {
 
             PrivilegedCarbonContext.startTenantFlow();
             PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId, true);
 
+            File file = new File(carbonApplicationPath);
 
-            //upload to registry
-            Registry registry = (Registry) PrivilegedCarbonContext.getThreadLocalCarbonContext()
-                                                                  .getRegistry(RegistryType.SYSTEM_GOVERNANCE);
-            String carbonAppPath = getCarbonAppPath(carbonApplicationName);
+            byte[] byteArray;
+            byteArray = FileUtils.readFileToByteArray(file);
+            DataHandler dataHandler = new javax.activation.DataHandler(byteArray, "application/octet-stream");
 
-            if (registry.resourceExists(carbonAppPath)) {
-                log.info("Carbon application already exists in " + carbonAppPath);
-                return true;
-            }
+            UploadedFileItem i = new UploadedFileItem();
+            i.setDataHandler(dataHandler);
+            i.setFileName(carbonApplicationName);
+            i.setFileType("jar");
 
-            File carbonApplicationFile = new File(carbonApplicationPath);
-            RegistryClientUtils.importToRegistry(carbonApplicationFile, REGISTRY_CAPP_LOCATION, registry);
+            UploadedFileItem[] ii = new UploadedFileItem[1];
+            ii[0] = i;
 
-
-            //deploy carbon app
-            Resource sampleFile = (Resource) registry.get(carbonAppPath);
-            UploadedFileItem[] fileItems = new UploadedFileItem[1];
-            fileItems[0] = new UploadedFileItem();
-            fileItems[0].setDataHandler(new DataHandler(
-                    new ByteArrayDataSource((byte[]) sampleFile.getContent(), "application/octet-stream")));
-            fileItems[0].setFileName(carbonApplicationName);
-            fileItems[0].setFileType("jar");
-
-            uploadApp(fileItems);
-
-
-            //delete from registry
-            if (registry.resourceExists(carbonAppPath)) {
-                log.info("Carbon application exists in " + carbonAppPath + " . deleting ..");
-                registry.delete(carbonAppPath);
-            }
-
+            uploadApp(ii);
             return true;
 
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            return false;
         } finally {
             PrivilegedCarbonContext.endTenantFlow();
         }
-    }
-
-    /**
-     * Upload a sample from the file system to the registry
-     *
-     * @param tenantId              tenant id
-     * @param carbonApplicationName The name of the sample file to be uploaded to the registry
-     * @param carbonApplicationPath path to upload carbon application from file system
-     * @return true if the operation successfully completed.
-     * @throws RegistryException Thrown if an error occurs while accessing the Registry
-     */
-    private boolean uploadCarbonApplicationToRegistry(int tenantId, String carbonApplicationName,
-                                                     String carbonApplicationPath) throws RegistryException {
-        try {
-            PrivilegedCarbonContext.startTenantFlow();
-            PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId, true);
-
-            Registry registry = (Registry) PrivilegedCarbonContext.getThreadLocalCarbonContext()
-                                                                  .getRegistry(RegistryType.SYSTEM_GOVERNANCE);
-            String carbonAppPath = getCarbonAppPath(carbonApplicationName);
-            if (registry.resourceExists(carbonAppPath)) {
-                log.info("Carbon application already exists in " + carbonAppPath);
-                return true;
-            }
-            File carbonApplicationFile = new File(carbonApplicationPath);
-            RegistryClientUtils.importToRegistry(carbonApplicationFile, REGISTRY_CAPP_LOCATION, registry);
-        } finally {
-            // Ultimately cleanup the tenant information before exiting the thread.
-            PrivilegedCarbonContext.endTenantFlow();
-        }
-        return true;
-    }
-
-    private String getCarbonAppPath(String carbonApplicationName) {
-        return REGISTRY_CAPP_LOCATION + carbonApplicationName;
-    }
-
-    private boolean removeCarbonApplicationInRegistry(int tenantId, String carbonApplicationName)
-            throws RegistryException {
-        try {
-            PrivilegedCarbonContext.startTenantFlow();
-            PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId, true);
-
-            Registry registry = (Registry) PrivilegedCarbonContext.getThreadLocalCarbonContext()
-                                                                  .getRegistry(RegistryType.SYSTEM_GOVERNANCE);
-            String carbonAppPath = getCarbonAppPath(carbonApplicationName);
-            if (registry.resourceExists(carbonAppPath)) {
-                log.info("Carbon application exists in " + carbonAppPath + " . deleting ..");
-                registry.delete(carbonAppPath);
-                return true;
-            }
-        } finally {
-            // Ultimately cleanup the tenant information before exiting the thread.
-            PrivilegedCarbonContext.endTenantFlow();
-        }
-        return true;
     }
 
 }

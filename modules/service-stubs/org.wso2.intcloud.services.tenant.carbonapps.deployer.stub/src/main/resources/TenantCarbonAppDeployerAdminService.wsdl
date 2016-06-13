@@ -1,25 +1,7 @@
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://deployer.carbonapps.tenant.services.intcloud.wso2.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:ax2608="http://api.registry.carbon.wso2.org/xsd" xmlns:ax2607="http://exceptions.core.registry.carbon.wso2.org/xsd" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://deployer.carbonapps.tenant.services.intcloud.wso2.org">
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://deployer.carbonapps.tenant.services.intcloud.wso2.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://deployer.carbonapps.tenant.services.intcloud.wso2.org">
    <wsdl:documentation>TenantCarbonAppDeployerAdminService</wsdl:documentation>
    <wsdl:types>
-      <xs:schema xmlns:ax2609="http://api.registry.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://exceptions.core.registry.carbon.wso2.org/xsd">
-         <xs:import namespace="http://api.registry.carbon.wso2.org/xsd"/>
-         <xs:complexType name="RegistryException">
-            <xs:complexContent>
-               <xs:extension base="ax2609:RegistryException">
-                  <xs:sequence/>
-               </xs:extension>
-            </xs:complexContent>
-         </xs:complexType>
-      </xs:schema>
-      <xs:schema xmlns:ax2610="http://exceptions.core.registry.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://deployer.carbonapps.tenant.services.intcloud.wso2.org">
-         <xs:import namespace="http://exceptions.core.registry.carbon.wso2.org/xsd"/>
-         <xs:element name="TenantCarbonAppDeployerAdminServiceRegistryException">
-            <xs:complexType>
-               <xs:sequence>
-                  <xs:element minOccurs="0" name="RegistryException" nillable="true" type="ax2610:RegistryException"/>
-               </xs:sequence>
-            </xs:complexType>
-         </xs:element>
+      <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://deployer.carbonapps.tenant.services.intcloud.wso2.org">
          <xs:element name="deployCarbonApplication">
             <xs:complexType>
                <xs:sequence>
@@ -37,11 +19,6 @@
             </xs:complexType>
          </xs:element>
       </xs:schema>
-      <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://api.registry.carbon.wso2.org/xsd">
-         <xs:complexType name="RegistryException">
-            <xs:sequence/>
-         </xs:complexType>
-      </xs:schema>
    </wsdl:types>
    <wsdl:message name="deployCarbonApplicationRequest">
       <wsdl:part name="parameters" element="ns:deployCarbonApplication"/>
@@ -49,14 +26,10 @@
    <wsdl:message name="deployCarbonApplicationResponse">
       <wsdl:part name="parameters" element="ns:deployCarbonApplicationResponse"/>
    </wsdl:message>
-   <wsdl:message name="TenantCarbonAppDeployerAdminServiceRegistryException">
-      <wsdl:part name="parameters" element="ns:TenantCarbonAppDeployerAdminServiceRegistryException"/>
-   </wsdl:message>
    <wsdl:portType name="TenantCarbonAppDeployerAdminServicePortType">
       <wsdl:operation name="deployCarbonApplication">
          <wsdl:input message="ns:deployCarbonApplicationRequest" wsaw:Action="urn:deployCarbonApplication"/>
          <wsdl:output message="ns:deployCarbonApplicationResponse" wsaw:Action="urn:deployCarbonApplicationResponse"/>
-         <wsdl:fault message="ns:TenantCarbonAppDeployerAdminServiceRegistryException" name="TenantCarbonAppDeployerAdminServiceRegistryException" wsaw:Action="urn:deployCarbonApplicationTenantCarbonAppDeployerAdminServiceRegistryException"/>
       </wsdl:operation>
    </wsdl:portType>
    <wsdl:binding name="TenantCarbonAppDeployerAdminServiceSoap11Binding" type="ns:TenantCarbonAppDeployerAdminServicePortType">
@@ -69,9 +42,6 @@
          <wsdl:output>
             <soap:body use="literal"/>
          </wsdl:output>
-         <wsdl:fault name="TenantCarbonAppDeployerAdminServiceRegistryException">
-            <soap:fault use="literal" name="TenantCarbonAppDeployerAdminServiceRegistryException"/>
-         </wsdl:fault>
       </wsdl:operation>
    </wsdl:binding>
    <wsdl:binding name="TenantCarbonAppDeployerAdminServiceSoap12Binding" type="ns:TenantCarbonAppDeployerAdminServicePortType">
@@ -84,9 +54,6 @@
          <wsdl:output>
             <soap12:body use="literal"/>
          </wsdl:output>
-         <wsdl:fault name="TenantCarbonAppDeployerAdminServiceRegistryException">
-            <soap12:fault use="literal" name="TenantCarbonAppDeployerAdminServiceRegistryException"/>
-         </wsdl:fault>
       </wsdl:operation>
    </wsdl:binding>
    <wsdl:binding name="TenantCarbonAppDeployerAdminServiceHttpBinding" type="ns:TenantCarbonAppDeployerAdminServicePortType">
