@@ -53,7 +53,7 @@ public class CarbonApplicationClient {
     TenantCarbonAppDeployerAdminServiceStub tenantCAppDeployerStub = null;
     TenantCarbonAppUnDeployerAdminServiceStub tenantCAppUnDeployerStub = null;
 
-    int MAX_TIME = 200000;
+    int MAX_TIME = 120000;
 
     private CarbonApplicationClient() throws IntCloudException {
         try {
