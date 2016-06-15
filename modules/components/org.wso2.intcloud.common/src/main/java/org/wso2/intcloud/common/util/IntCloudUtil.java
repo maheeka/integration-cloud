@@ -44,7 +44,7 @@ public class IntCloudUtil {
         try {
             loadIntCloudConfig();
         } catch (IntCloudException e) {
-            String message = "Unable to load AppCloud configuration file";
+            String message = "Unable to load intcloud configuration file";
             log.error(message, e);
         }
     }
@@ -64,10 +64,10 @@ public class IntCloudUtil {
             inputStream = new FileInputStream(file);
             properties.load(inputStream);
         } catch (FileNotFoundException e) {
-            String message = "The AppCloud.properties file not found from file location: " + fileLocation;
+            String message = "The " + IntCloudConstant.CONFIG_FILE_NAME + " file not found from file location: " + fileLocation;
             throw new IntCloudException(message, e);
         } catch (IOException e) {
-            String message = "Unable to read AppCloud.properties file from file location: " + fileLocation;
+            String message = "Unable to read " + IntCloudConstant.CONFIG_FILE_NAME + " file from file location: " + fileLocation;
             throw new IntCloudException(message, e);
         } finally {
             try {
@@ -75,7 +75,7 @@ public class IntCloudUtil {
                     inputStream.close();
                 }
             } catch (IOException e) {
-                String message = "Unable to close file input stream while reading appcloud configuration";
+                String message = "Unable to close file input stream while reading intcloud configuration";
                 log.error(message, e);
             }
         }
