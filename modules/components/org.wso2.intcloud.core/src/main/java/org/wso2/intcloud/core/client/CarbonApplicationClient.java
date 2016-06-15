@@ -228,7 +228,7 @@ public class CarbonApplicationClient {
         String[] applicationList;
         try {
             applicationList = appAdminStub.listAllApplications();
-            log.info("Found applications " + applicationList);
+            log.info("Found applications " + Arrays.toString(applicationList));
         } catch (RemoteException | ApplicationAdminExceptionException e) {
             throw new IntCloudException("Error getting deployed application list from server", e);
         }

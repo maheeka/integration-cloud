@@ -31,6 +31,8 @@ import org.wso2.carbon.task.stub.TaskAdminStub;
 import org.wso2.carbon.task.stub.TaskManagementException;
 import org.wso2.intcloud.common.IntCloudException;
 import org.wso2.intcloud.common.util.IntCloudUtil;
+import org.wso2.intcloud.services.tenant.ntasks.stub.types.TenantNTaskAdminServiceExceptionException;
+import org.wso2.intcloud.services.tenant.ntasks.stub.types.TenantNTaskAdminServiceStub;
 import org.wso2.intcloud.services.tenant.tasks.stub.types.TenantTaskAdminServiceStub;
 import org.wso2.intcloud.services.tenant.tasks.stub.types.TenantTaskAdminServiceTaskManagementExceptionException;
 
@@ -48,6 +50,8 @@ public class ScheduledTaskClient {
     TaskAdminStub taskAdminStub = null;
 
     TenantTaskAdminServiceStub tenantTaskAdminServiceStub = null;
+
+    TenantNTaskAdminServiceStub tenantNTaskAdminServiceStub = null;
 
     private ScheduledTaskClient() throws IntCloudException {
 
@@ -79,6 +83,22 @@ public class ScheduledTaskClient {
         ten_authenticator.setPreemptiveAuthentication(true);
         ten_client_options.setProperty(org.apache.axis2.transport.http.HTTPConstants.AUTHENTICATE, ten_authenticator);
         ten_client.setOptions(ten_client_options);
+
+        try {
+            tenantNTaskAdminServiceStub =
+                    new TenantNTaskAdminServiceStub(IntCloudUtil.getPropertyValue("TenantNTaskAdminService"));
+        } catch (AxisFault axisFault) {
+            throw new IntCloudException(axisFault.getMessage(), axisFault);
+        }
+        ServiceClient ten_ntask_client = tenantNTaskAdminServiceStub._getServiceClient();
+        Options ten_ntask_client_options = ten_ntask_client.getOptions();
+        HttpTransportProperties.Authenticator ten_ntask_authenticator = new HttpTransportProperties.Authenticator();
+        ten_ntask_authenticator.setUsername(IntCloudUtil.getPropertyValue("ESBServerUserName"));
+        ten_ntask_authenticator.setPassword(IntCloudUtil.getPropertyValue("ESBServerPassword"));
+        ten_ntask_authenticator.setPreemptiveAuthentication(true);
+        ten_ntask_client_options
+                .setProperty(org.apache.axis2.transport.http.HTTPConstants.AUTHENTICATE, ten_ntask_authenticator);
+        ten_ntask_client.setOptions(ten_ntask_client_options);
     }
 
     public static ScheduledTaskClient getInstance() throws IntCloudException {
@@ -98,8 +118,21 @@ public class ScheduledTaskClient {
         try {
             String taskConfiguration = getTaskConfiguration(applicationName, paramConfigurationJSON);
             taskOM = AXIOMUtil.stringToOM(taskConfiguration);
+
+            String taskName = taskOM.getAttributeValue(new QName("name"));
+            String taskGroup = taskOM.getAttributeValue(new QName("group"));
+
             log.info("Deploying task configuration : " + taskConfiguration);
+
+            boolean taskExists = tenantTaskAdminServiceStub.taskExists(tenantId, taskName, taskGroup);
+
+            if(taskExists) {
+                log.info("Deleting existing task " + taskName + " to redeploy");
+                tenantTaskAdminServiceStub.deleteTaskDescriptionInTenant(tenantId, taskName, taskGroup);
+            }
+
             tenantTaskAdminServiceStub.addTaskDescriptionInTenant(tenantId, taskConfiguration);
+
         } catch (XMLStreamException | RemoteException | TenantTaskAdminServiceTaskManagementExceptionException e) {
             throw new IntCloudException(e.getMessage(), e);
         }
@@ -255,5 +288,23 @@ public class ScheduledTaskClient {
         String taskGroup = task.getAttributeValue(new QName("group"));
 
         deleteTask(taskName, taskGroup);
+    }
+
+    public boolean getTaskStatus(int tenantId, String applicationName, String taskConfiguration)
+            throws IntCloudException {
+        OMElement task = null;
+        try {
+            task = AXIOMUtil.stringToOM(taskConfiguration);
+        } catch (XMLStreamException e) {
+            throw new IntCloudException("Error getting status of task for " + applicationName, e);
+        }
+
+        String taskName = task.getAttributeValue(new QName("name"));
+
+        try {
+            return tenantNTaskAdminServiceStub.isESBTaskRunningInTenant(tenantId, taskName);
+        } catch (RemoteException | TenantNTaskAdminServiceExceptionException e) {
+            throw new IntCloudException("Error getting state of integration task for " + applicationName, e);
+        }
     }
 }

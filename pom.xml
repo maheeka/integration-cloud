@@ -121,6 +121,11 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.appcloud</groupId>
+                <artifactId>org.wso2.intcloud.services.tenant.ntasks.stub</artifactId>
+                <version>${appcloud.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.appcloud</groupId>
                 <artifactId>org.wso2.intcloud.common</artifactId>
                 <version>${appcloud.version}</version>
             </dependency>
@@ -227,6 +232,11 @@
                 <artifactId>org.wso2.carbon.task</artifactId>
                 <version>${carbon.mediation.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.mediation</groupId>
+                <artifactId>org.wso2.carbon.mediation.ntaskadmin</artifactId>
+                <version>${carbon.mediation.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -275,11 +285,13 @@
         <module>modules/services/org.wso2.intcloud.services.tenant.carbonapps.undeployer</module>
         <module>modules/services/org.wso2.intcloud.services.tenant.templates</module>
         <module>modules/services/org.wso2.intcloud.services.tenant.tasks</module>
+        <module>modules/services/org.wso2.intcloud.services.tenant.ntasks</module>
         <module>modules/service-stubs/org.wso2.intcloud.services.tenant.carbonapps.deployer.stub</module>
         <module>modules/service-stubs/org.wso2.intcloud.services.tenant.carbonapps.undeployer.stub</module>
         <module>modules/service-stubs/org.wso2.intcloud.services.tenant.templates.stub</module>
         <module>modules/service-stubs/org.wso2.intcloud.services.tenant.tasks.stub</module>
-        
+        <module>modules/service-stubs/org.wso2.intcloud.services.tenant.ntasks.stub</module>
+
         <!--module>modules/integreation/integration-tests</module-->
     </modules>
 
@@ -360,7 +372,7 @@
     </issueManagement>
 
     <properties>
-        <carbon.platform.version>4.2.0</carbon.platform.version>
+        <carbon.platform.version>4.4.5</carbon.platform.version>
         <equinox.osgi.version>3.10.2.v20150203-1939</equinox.osgi.version>
         <appcloud.version>3.0.0-SNAPSHOT</appcloud.version>
         <equinox.osgi.services.version>3.4.0.v20140312-2051</equinox.osgi.services.version>

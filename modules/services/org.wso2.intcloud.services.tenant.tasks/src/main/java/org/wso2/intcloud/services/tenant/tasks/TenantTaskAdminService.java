@@ -31,7 +31,7 @@ public class TenantTaskAdminService extends CarbonTaskManagementService {
 
     private static final Log log = LogFactory.getLog(TenantTaskAdminService.class);
 
-    public boolean addTaskDescriptionInTenant(int tenantId, String taskElement) throws TaskManagementException {
+    public boolean addTaskDescriptionInTenant(int tenantId, String taskElement) {
         try {
             PrivilegedCarbonContext.startTenantFlow();
             PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId, true);
@@ -39,7 +39,11 @@ public class TenantTaskAdminService extends CarbonTaskManagementService {
             return addTaskDescription(AXIOMUtil.stringToOM(taskElement));
 
         } catch (XMLStreamException e) {
-            throw new TaskManagementException(e.getMessage(), e);
+            log.error(e.getMessage(),e);
+            return false;
+        } catch (TaskManagementException e) {
+            log.error(e.getMessage(), e);
+            return false;
         } finally {
             PrivilegedCarbonContext.endTenantFlow();
         }
@@ -59,4 +63,19 @@ public class TenantTaskAdminService extends CarbonTaskManagementService {
         }
     }
 
+    public boolean taskExists(int tenantId, String name, String group)
+            throws TaskManagementException {
+        log.info("Getting task " + name);
+        try {
+            PrivilegedCarbonContext.startTenantFlow();
+            PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId, true);
+
+            OMElement taskDescription = getTaskDescription(name, group);
+
+            return (taskDescription != null);
+
+        } finally {
+            PrivilegedCarbonContext.endTenantFlow();
+        }
+    }
 }

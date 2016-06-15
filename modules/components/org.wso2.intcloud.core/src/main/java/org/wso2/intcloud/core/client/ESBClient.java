@@ -96,4 +96,8 @@ public class ESBClient {
             throws IntCloudException, TaskManagementException, XMLStreamException, IOException, InterruptedException {
         ScheduledTaskClient.getInstance().stopTask(tenantId, applicationName, taskConfiguration);
     }
+
+    public boolean getTaskStatus(int tenantId, String applicationName, String taskConfiguration) throws IntCloudException {
+        return ScheduledTaskClient.getInstance().getTaskStatus(tenantId, applicationName, taskConfiguration);
+    }
 }

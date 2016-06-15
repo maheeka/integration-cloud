@@ -38,6 +38,7 @@ public class TenantCarbonAppDeployer extends CarbonAppUploader {
      *
      * @param tenantId              tenant id
      * @param carbonApplicationName Name of the carbon application
+     * @param carbonApplicationPath path to carbon application
      * @return true if the operation successfully completed.
      * @throws AxisFault Thrown if and error occurs while uploading the sample
      */
