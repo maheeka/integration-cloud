@@ -14,14 +14,14 @@
 * limitations under the License.
 */
 
-package org.wso2.appcloud.tierapi.dao.impl;
+package org.wso2.intcloud.tierapi.dao.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.appcloud.tierapi.bean.ContainerSpecifications;
-import org.wso2.appcloud.tierapi.bean.Plan;
-import org.wso2.appcloud.tierapi.dao.PlanDao;
-import org.wso2.appcloud.tierapi.util.DBConfiguration;
+import org.wso2.intcloud.tierapi.bean.ContainerSpecifications;
+import org.wso2.intcloud.tierapi.bean.Plan;
+import org.wso2.intcloud.tierapi.dao.PlanDao;
+import org.wso2.intcloud.tierapi.util.DBConfiguration;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.sql.Connection;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @XmlRootElement
-public class PlanDaoImpl implements PlanDao{
+public class PlanDaoImpl implements PlanDao {
 
 	private static final Log log = LogFactory.getLog(PlanDaoImpl.class);
 

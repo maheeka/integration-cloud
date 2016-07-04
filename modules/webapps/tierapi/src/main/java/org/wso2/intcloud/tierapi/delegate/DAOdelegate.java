@@ -14,12 +14,12 @@
 * limitations under the License.
 */
 
-package org.wso2.appcloud.tierapi.delegate;
+package org.wso2.intcloud.tierapi.delegate;
 
-import org.wso2.appcloud.tierapi.dao.ContainerSpecsDao;
-import org.wso2.appcloud.tierapi.dao.PlanDao;
-import org.wso2.appcloud.tierapi.dao.impl.ContainerSpecDaoImpl;
-import org.wso2.appcloud.tierapi.dao.impl.PlanDaoImpl;
+import org.wso2.intcloud.tierapi.dao.ContainerSpecsDao;
+import org.wso2.intcloud.tierapi.dao.PlanDao;
+import org.wso2.intcloud.tierapi.dao.impl.ContainerSpecDaoImpl;
+import org.wso2.intcloud.tierapi.dao.impl.PlanDaoImpl;
 
 public class DAOdelegate {
 

@@ -14,10 +14,10 @@
 * limitations under the License.
 */
 
-package org.wso2.appcloud.tierapi.dao;
+package org.wso2.intcloud.tierapi.dao;
 
-import org.wso2.appcloud.tierapi.bean.ContainerSpecifications;
-import org.wso2.appcloud.tierapi.bean.Plan;
+import org.wso2.intcloud.tierapi.bean.ContainerSpecifications;
+import org.wso2.intcloud.tierapi.bean.Plan;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.sql.SQLException;

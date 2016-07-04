@@ -101,9 +101,9 @@
                 <version>${appcloud.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.appcloud</groupId>
+                <groupId>org.wso2.intcloud</groupId>
                 <artifactId>org.wso2.intcloud.common</artifactId>
-                <version>${appcloud.version}</version>
+                <version>${intcloud.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.fabric8</groupId>
@@ -330,6 +330,7 @@
     <properties>
         <carbon.platform.version>4.2.0</carbon.platform.version>
         <equinox.osgi.version>3.10.2.v20150203-1939</equinox.osgi.version>
+        <intcloud.version>1.0.0-SNAPSHOT</intcloud.version>
         <appcloud.version>3.0.0-SNAPSHOT</appcloud.version>
         <equinox.osgi.services.version>3.4.0.v20140312-2051</equinox.osgi.services.version>
         <maven.checkstyleplugin.version>2.16</maven.checkstyleplugin.version>

@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.wso2.appcloud.tierapi.util;
+package org.wso2.intcloud.tierapi.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

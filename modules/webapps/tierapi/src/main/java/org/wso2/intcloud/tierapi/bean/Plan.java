@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.wso2.appcloud.tierapi.bean;
+package org.wso2.intcloud.tierapi.bean;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

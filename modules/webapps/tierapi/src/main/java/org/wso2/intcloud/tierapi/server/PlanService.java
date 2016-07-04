@@ -14,12 +14,12 @@
 * limitations under the License.
 */
 
-package org.wso2.appcloud.tierapi.server;
+package org.wso2.intcloud.tierapi.server;
 
-import org.wso2.appcloud.tierapi.bean.ContainerSpecifications;
-import org.wso2.appcloud.tierapi.bean.Plan;
-import org.wso2.appcloud.tierapi.dao.impl.PlanDaoImpl;
-import org.wso2.appcloud.tierapi.delegate.DAOdelegate;
+import org.wso2.intcloud.tierapi.bean.ContainerSpecifications;
+import org.wso2.intcloud.tierapi.bean.Plan;
+import org.wso2.intcloud.tierapi.dao.impl.PlanDaoImpl;
+import org.wso2.intcloud.tierapi.delegate.DAOdelegate;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

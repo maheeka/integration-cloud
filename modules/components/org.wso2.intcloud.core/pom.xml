@@ -26,7 +26,7 @@
             <artifactId>org.wso2.carbon.utils</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.appcloud</groupId>
+            <groupId>org.wso2.intcloud</groupId>
             <artifactId>org.wso2.intcloud.common</artifactId>
         </dependency>
         <dependency>
