@@ -132,7 +132,7 @@ public class CarbonApplicationClient {
                  "' to tenant " + tenantId);
 
         try {
-            tenantCAppDeployerStub.deployCarbonApplication(tenantId, carbonApplicationName, carbonApplicationPath);
+            tenantCAppDeployerStub.deployCarbonApplication(tenantId, carbonApplicationPath);
         } catch (RemoteException | TenantCarbonAppDeployerAdminServiceRegistryExceptionException e) {
             throw new IntCloudException(e.getMessage(), e);
         }

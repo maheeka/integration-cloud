@@ -100,7 +100,7 @@ public class ScheduledTaskClient {
             taskOM = AXIOMUtil.stringToOM(taskConfiguration);
             log.info("Deploying task configuration : " + taskConfiguration);
             tenantTaskAdminServiceStub.addTaskDescriptionInTenant(tenantId, taskConfiguration);
-        } catch (XMLStreamException | RemoteException | TenantTaskAdminServiceTaskManagementExceptionException e) {
+        } catch (XMLStreamException | RemoteException e) {
             throw new IntCloudException(e.getMessage(), e);
         }
         return taskOM;
