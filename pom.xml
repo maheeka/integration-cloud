@@ -20,11 +20,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.wso2.appcloud</groupId>
-    <artifactId>appcloud-parent</artifactId>
+    <groupId>org.wso2.intcloud</groupId>
+    <artifactId>intcloud-parent</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0-SNAPSHOT</version>
-    <name>WSO2 AppCloud</name>
+    <name>WSO2 Integration Cloud</name>
     <licenses>
         <license>
             <name>Apache License Version 2.0</name>
