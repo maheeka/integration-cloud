@@ -42,7 +42,7 @@ public class IntCloudUtil {
         try {
             loadIntCloudConfig();
         } catch (IntCloudException e) {
-            String message = "Unable to load AppCloud configuration file";
+            String message = "Unable to load intcloud configuration file";
             log.error(message, e);
         }
     }
