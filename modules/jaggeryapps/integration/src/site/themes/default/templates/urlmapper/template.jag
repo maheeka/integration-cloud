@@ -1,0 +1,124 @@
+<%
+/*
+ * Copyright (c) 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *   WSO2 Inc. licenses this file to you under the Apache License,
+ *   Version 2.0 (the "License"); you may not use this file except
+ *   in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing,
+ *   software distributed under the License is distributed on an
+ *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *   KIND, either express or implied.  See the License for the
+ *   specific language governing permissions and limitations
+ *   under the License.
+ */
+include("/jagg/constants.jag");
+jagg.template("urlmapper", function (inputs, outputs, jagg) { %>
+<%
+    var application = outputs.application;
+    var versions = application.versions;
+    var defaultVersionName = application.defaultVersionName;
+    var applicationKey = application.hashId;
+
+    if (versions !== null) {
+        var versionString = "";
+        for (var version in versions) {
+            var versionName = versions[version].versionName;
+            var versionUrl = versions[version].deploymentURL;
+            if (defaultVersionName == versionName) {
+                versionString += "<option" + ' value="' + versionUrl + '" ' + " selected>" + versionName + "</option>";
+            } else {
+                versionString += "<option" + ' value="' + versionUrl + '" ' + ">" + versionName + "</option>";
+            }
+
+        }
+    }
+
+%>
+
+<!-- start of setting global javascript variable values from jaggery side -->
+<script type="text/javascript" charset="utf-8">
+    var applicationName = "<%=application.applicationName%>";
+    var defaultVersionName = "<%=defaultVersionName%>";
+    var versions = jQuery.parseJSON('<%=versions%>');
+</script><!-- end of setting global javascript variable -->
+
+<!-- BOF App factory menu actionbar -->
+<input type="hidden" maxlength="19" id="defaultDomain" name="defaultDomain" value=""/>
+<div class="action-bar">
+	<a href="/integration/site/pages/home.jag?applicationKey=<%=applicationKey%>" class="btn-action" data-toggle="tooltip" data-placement="top" title="Tooltip on top">
+         <span class="fw-stack fw-lg btn-action-ico">
+             <i class="fw fw-circle-outline fw-stack-2x"></i>
+             <i class="fw fw-left-arrow fw-stack-1x"></i>
+         </span> <span class="hidden-xs">Back to Application</span>
+    </a>
+</div><!-- EOF App factory menu actionbar-->
+
+<div class="container-fluid app-content-section">
+    <div class="row">
+         <div class="col-md-12 msg-issues">
+             Create customized URLs for the applications with your domain name, instead of the default URLs.
+         </div>
+    </div>
+ <div class="clearfix"></div>
+<div id="push"></div>
+ <div class="row form-section">
+ <div name="customUrlForm" id="customUrlForm">
+     <div class="col-md-5 forms">
+         <div class="form-group" for="productionVersion">
+             <label for="production-Version">Mapped Version in Production: </label>
+             <select id="productionVersion" name="productionVersion" class="form-control select2 mygroup"
+             placeholder="Select a state" allowClear="true">
+                <%=versionString%>
+             </select>
+         </div>
+
+         <div class="form-group" for="productionCustom">
+            <label for="production-Custom">Custom URL: </label>
+
+             <div class="input-group" >
+                 <input type="text" class="form-control mygroup" id="productionCustom" name="productionCustom"
+                 placeholder="Enter your custom URL" value="">
+                     <span class="input-group-btn">
+                         <button class="btn btn-info" type="button" id="verifyUrl" name="verifyUrl"
+                         onclick="verifyCustomUrl()">Verify URL</button>
+                     </span>
+             </div>
+
+         </div>
+
+         <div class="form-group">
+             <button class="cu-btn cu-btn-sm cu-btn-blue" id="updateCustomUrl" onclick="updateCustomUrl()">
+             <span class="fw-stack fw-lg btn-action-ico">
+                 <i class="fw fw-circle-outline fw-stack-2x"></i>
+                 <i class="fw fw-add fw-stack-1x"></i>
+             </span>
+                 Update
+             </button>
+             <button class="cu-btn cu-btn-sm cu-btn-blue" id="editCustomUrl" onclick="editCustomUrl()">
+             <span class="fw-stack fw-lg btn-action-ico">
+                 <i class="fw fw-circle-outline fw-stack-2x"></i>
+                 <i class="fw fw-circle-outline fw-stack-1x"></i>
+             </span>
+                 Edit
+             </button>
+         </div>
+     </div>
+</form>
+ </div>
+</div><!-- /.container -->
+<div class="clearfix"></div>
+<div id="push"></div>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('js/bootstrap-3.2.0/bootstrap.min.js'))%>"></script>
+<!-- include custom js functions -->
+<script src="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('js/custom/custom.js'))%>"></script>
+<script src="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('templates/urlmapper/js/customurl.js'))%>"></script>
+<script src="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('js/custom/loader.js'))%>"></script>
+
+   <%
+}); %>

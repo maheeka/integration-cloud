@@ -24,10 +24,6 @@ import org.wso2.intcloud.core.dao.ApplicationDAO;
 import org.wso2.intcloud.core.dto.Application;
 import org.wso2.intcloud.core.dto.ApplicationRuntime;
 import org.wso2.intcloud.core.dto.ApplicationType;
-import org.wso2.intcloud.core.dto.ContainerServiceProxy;
-import org.wso2.intcloud.core.dto.Deployment;
-import org.wso2.intcloud.core.dto.RuntimeProperty;
-import org.wso2.intcloud.core.dto.Tag;
 import org.wso2.intcloud.core.dto.Transport;
 import org.wso2.intcloud.core.dto.Version;
 
@@ -97,64 +93,6 @@ public class ApplicationManager {
             DBUtil.closeConnection(dbConnection);
         }
 
-    }
-
-    /**
-     * Method for adding runtime properties for a specific version.
-     *
-     * @param runtimeProperties list of runtime properties
-     * @param versionHashId     version hash id
-     * @throws IntCloudException
-     */
-    public static void addRuntimeProperties(List<RuntimeProperty> runtimeProperties, String versionHashId)
-            throws IntCloudException {
-        ApplicationDAO applicationDAO = new ApplicationDAO();
-        Connection dbConnection = DBUtil.getDBConnection();
-        int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
-
-        try {
-            int versionId = applicationDAO.getVersionId(dbConnection, versionHashId);
-
-            if (runtimeProperties != null) {
-                applicationDAO.addRunTimeProperties(dbConnection, runtimeProperties, versionHashId, tenantId);
-                dbConnection.commit();
-            }
-        } catch (SQLException e) {
-            String msg =
-                    "Error while committing the transaction when adding runtime properties for version with version" +
-                    " id : " + versionHashId;
-            log.error(msg, e);
-            throw new IntCloudException(msg, e);
-        } finally {
-            DBUtil.closeConnection(dbConnection);
-        }
-    }
-
-    /**
-     * Method for adding tags for a specific version.
-     *
-     * @param tags          list of tags
-     * @param versionHashId version hash id
-     * @throws IntCloudException
-     */
-    public static void addTags(List<Tag> tags, String versionHashId) throws IntCloudException {
-        ApplicationDAO applicationDAO = new ApplicationDAO();
-        Connection dbConnection = DBUtil.getDBConnection();
-        int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
-
-        try {
-            if (tags != null) {
-                applicationDAO.addTags(dbConnection, tags, versionHashId, tenantId);
-                dbConnection.commit();
-            }
-        } catch (SQLException e) {
-            String msg = "Error while committing the transaction when adding tags for version with hash id : " +
-                         versionHashId;
-            log.error(msg, e);
-            throw new IntCloudException(msg, e);
-        } finally {
-            DBUtil.closeConnection(dbConnection);
-        }
     }
 
     /**
@@ -317,68 +255,6 @@ public class ApplicationManager {
 
         try {
             return applicationDAO.getApplicationByHashId(dbConnection, applicationHashId);
-        } finally {
-            DBUtil.closeConnection(dbConnection);
-        }
-    }
-
-    public static List<RuntimeProperty> getAllRuntimePropertiesOfVersion(String versionHashId)
-            throws IntCloudException {
-
-        ApplicationDAO applicationDAO = new ApplicationDAO();
-        Connection dbConnection = DBUtil.getDBConnection();
-
-        try {
-            return applicationDAO.getAllRuntimePropertiesOfVersion(dbConnection, versionHashId);
-        } finally {
-            DBUtil.closeConnection(dbConnection);
-        }
-    }
-
-    public static List<Tag> getAllTagsOfVersion(String versionHashId) throws IntCloudException {
-
-        ApplicationDAO applicationDAO = new ApplicationDAO();
-        Connection dbConnection = DBUtil.getDBConnection();
-
-        try {
-            return applicationDAO.getAllTagsOfVersion(dbConnection, versionHashId);
-        } finally {
-            DBUtil.closeConnection(dbConnection);
-        }
-    }
-
-    public static void updateRuntimeProperty(String versionHashId, String oldKey, String newKey, String newValue)
-            throws IntCloudException {
-        ApplicationDAO applicationDAO = new ApplicationDAO();
-        Connection dbConnection = DBUtil.getDBConnection();
-
-        try {
-            applicationDAO.updateRuntimeProperty(dbConnection, versionHashId, oldKey, newKey, newValue);
-            dbConnection.commit();
-        } catch (SQLException e) {
-            String msg = "Error while committing transaction when adding runtime property with key : " + oldKey +
-                         " for version with hash id : " + versionHashId;
-            log.error(msg, e);
-            throw new IntCloudException(msg, e);
-        } finally {
-            DBUtil.closeConnection(dbConnection);
-        }
-    }
-
-    public static void updateTag(String versionHashId, String oldKey, String newKey, String newValue)
-            throws IntCloudException {
-
-        ApplicationDAO applicationDAO = new ApplicationDAO();
-        Connection dbConnection = DBUtil.getDBConnection();
-
-        try {
-            applicationDAO.updateTag(dbConnection, versionHashId, oldKey, newKey, newValue);
-            dbConnection.commit();
-        } catch (SQLException e) {
-            String msg = "Error while committing the transaction when updating tag with the key : " + oldKey +
-                         " for version with hash id : " + versionHashId;
-            log.error(msg, e);
-            throw new IntCloudException(msg, e);
         } finally {
             DBUtil.closeConnection(dbConnection);
         }
@@ -547,46 +423,6 @@ public class ApplicationManager {
         }
     }
 
-    public static void addDeployment(String versionHashId, Deployment deployment) throws IntCloudException {
-        int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
-        ApplicationDAO applicationDAO = new ApplicationDAO();
-        Connection dbcConnection = DBUtil.getDBConnection();
-        try {
-            applicationDAO.addDeployment(dbcConnection, versionHashId, deployment, tenantId);
-            dbcConnection.commit();
-        } catch (SQLException e) {
-            String msg = "Error while committing transaction when adding deployment for version with hash id : " +
-                         versionHashId;
-            log.error(msg, e);
-            throw new IntCloudException(msg, e);
-        } finally {
-            DBUtil.closeConnection(dbcConnection);
-        }
-
-    }
-
-    public static Deployment getDeployment(String versionHashId) throws IntCloudException {
-        ApplicationDAO applicationDAO = new ApplicationDAO();
-        return applicationDAO.getDeployment(versionHashId);
-    }
-
-    public static void deleteDeployment(String versionHashId) throws IntCloudException {
-
-        ApplicationDAO applicationDAO = new ApplicationDAO();
-        Connection dbConnection = DBUtil.getDBConnection();
-        try {
-            applicationDAO.deleteDeployment(dbConnection, versionHashId);
-            dbConnection.commit();
-        } catch (SQLException e) {
-            String msg = "Error while committing transaction when deleting deployment for version with hash id : " +
-                         versionHashId;
-            log.error(msg, e);
-            throw new IntCloudException(msg, e);
-        } finally {
-            DBUtil.closeConnection(dbConnection);
-        }
-    }
-
     public static Transport[] getTransportsForRuntime(int runtimeId) throws IntCloudException {
         ApplicationDAO applicationDAO = new ApplicationDAO();
         List<Transport> transports = applicationDAO.getTransportsForRuntime(runtimeId);
@@ -605,56 +441,6 @@ public class ApplicationManager {
         int applicationCount = applicationDAO.getApplicationCount(tenantId);
 
         return applicationCount;
-    }
-
-    /**
-     * Get container service proxy by version hash id.
-     *
-     * @param versionHashId
-     * @return
-     * @throws IntCloudException
-     */
-    public static List<ContainerServiceProxy> getContainerServiceProxyByVersion(String versionHashId)
-            throws IntCloudException {
-        ApplicationDAO applicationDAO = new ApplicationDAO();
-        List<ContainerServiceProxy> containerServiceProxies = null;
-
-        try {
-            containerServiceProxies = applicationDAO.getContainerServiceProxyByVersion(versionHashId);
-        } catch (IntCloudException e) {
-            String message = "Error while getting container service proxy with version hash id : " + versionHashId;
-            throw new IntCloudException(message, e);
-        }
-
-        return containerServiceProxies;
-    }
-
-    /**
-     * Update container service proxy service by version hash id.
-     *
-     * @param versionHashId
-     * @param host_url
-     * @return
-     * @throws IntCloudException
-     */
-    public static boolean updateContainerServiceProxyService(String versionHashId, String host_url)
-            throws IntCloudException {
-        ApplicationDAO applicationDAO = new ApplicationDAO();
-        Connection dbConnection = DBUtil.getDBConnection();
-        boolean isUpdateSuccess = false;
-
-        try {
-            isUpdateSuccess = applicationDAO.updateContainerServiceProxy(dbConnection, versionHashId, host_url);
-            dbConnection.commit();
-        } catch (SQLException e) {
-            String msg = "Error while updating the container service proxy with version hash id : " + versionHashId;
-            log.error(msg, e);
-            throw new IntCloudException(msg, e);
-        } finally {
-            DBUtil.closeConnection(dbConnection);
-        }
-
-        return isUpdateSuccess;
     }
 
     /**

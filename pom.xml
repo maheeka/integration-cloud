@@ -19,26 +19,12 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <dependencies>
-        <dependency>
-            <groupId>org.wso2.carbon.mediation</groupId>
-            <artifactId>org.wso2.carbon.task</artifactId>
-            <version>4.6.0</version>
-        </dependency>
-    </dependencies>
 
-    <parent>
-        <groupId>org.wso2</groupId>
-        <artifactId>wso2</artifactId>
-        <version>1</version>
-        <relativePath/>
-    </parent>
-
-    <groupId>org.wso2.appcloud</groupId>
-    <artifactId>appcloud-parent</artifactId>
+    <groupId>org.wso2.intcloud</groupId>
+    <artifactId>intcloud-parent</artifactId>
     <packaging>pom</packaging>
-    <version>3.0.0-SNAPSHOT</version>
-    <name>WSO2 AppCloud</name>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>WSO2 Integration Cloud</name>
     <licenses>
         <license>
             <name>Apache License Version 2.0</name>
@@ -95,34 +81,9 @@
                 <version>2.26.1.wso2v2</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.appcloud</groupId>
-                <artifactId>org.wso2.appcloud.common</artifactId>
-                <version>${appcloud.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.appcloud</groupId>
-                <artifactId>org.wso2.intcloud.services.tenant.carbonapps.deployer.stub</artifactId>
-                <version>${appcloud.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.appcloud</groupId>
-                <artifactId>org.wso2.intcloud.services.tenant.carbonapps.undeployer.stub</artifactId>
-                <version>${appcloud.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.appcloud</groupId>
-                <artifactId>org.wso2.intcloud.services.tenant.templates.stub</artifactId>
-                <version>${appcloud.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.appcloud</groupId>
-                <artifactId>org.wso2.intcloud.services.tenant.tasks.stub</artifactId>
-                <version>${appcloud.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.appcloud</groupId>
+                <groupId>org.wso2.intcloud</groupId>
                 <artifactId>org.wso2.intcloud.common</artifactId>
-                <version>${appcloud.version}</version>
+                <version>${intcloud.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.fabric8</groupId>
@@ -264,23 +225,10 @@
     </build>
 
     <modules>
-        <module>modules/components/org.wso2.appcloud.common</module>
-        <module>modules/components/org.wso2.appcloud.core</module>
-        <module>modules/components/org.wso2.appcloud.provisioning.runtime</module>
         <module>modules/components/org.wso2.intcloud.common</module>
         <module>modules/components/org.wso2.intcloud.core</module>
-        <module>modules/jaggeryapps/appmgt</module>
-        <module>modules/webapps/appCloudTierapi</module>
-        <module>modules/services/org.wso2.intcloud.services.tenant.carbonapps.deployer</module>
-        <module>modules/services/org.wso2.intcloud.services.tenant.carbonapps.undeployer</module>
-        <module>modules/services/org.wso2.intcloud.services.tenant.templates</module>
-        <module>modules/services/org.wso2.intcloud.services.tenant.tasks</module>
-        <module>modules/service-stubs/org.wso2.intcloud.services.tenant.carbonapps.deployer.stub</module>
-        <module>modules/service-stubs/org.wso2.intcloud.services.tenant.carbonapps.undeployer.stub</module>
-        <module>modules/service-stubs/org.wso2.intcloud.services.tenant.templates.stub</module>
-        <module>modules/service-stubs/org.wso2.intcloud.services.tenant.tasks.stub</module>
-        
-        <!--module>modules/integreation/integration-tests</module-->
+        <!--<module>modules/jaggeryapps/appmgt</module>-->
+        <module>modules/webapps/tierapi</module>
     </modules>
 
     <repositories>
@@ -356,13 +304,13 @@
 
     <issueManagement>
         <system>JIRA</system>
-        <url>https://wso2.org/jira/browse/APPCLOUD</url>
+        <url>https://wso2.org/jira/browse/INTEGRATIONCLOUD</url>
     </issueManagement>
 
     <properties>
         <carbon.platform.version>4.2.0</carbon.platform.version>
         <equinox.osgi.version>3.10.2.v20150203-1939</equinox.osgi.version>
-        <appcloud.version>3.0.0-SNAPSHOT</appcloud.version>
+        <intcloud.version>1.0.0-SNAPSHOT</intcloud.version>
         <equinox.osgi.services.version>3.4.0.v20140312-2051</equinox.osgi.services.version>
         <maven.checkstyleplugin.version>2.16</maven.checkstyleplugin.version>
         <maven.findbugsplugin.version>3.0.2</maven.findbugsplugin.version>

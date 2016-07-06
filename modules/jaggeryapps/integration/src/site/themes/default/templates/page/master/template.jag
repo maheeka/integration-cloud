@@ -1,0 +1,53 @@
+<%
+/*
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *   WSO2 Inc. licenses this file to you under the Apache License,
+ *   Version 2.0 (the "License"); you may not use this file except
+ *   in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing,
+ *   software distributed under the License is distributed on an
+ *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *   KIND, either express or implied.  See the License for the
+ *   specific language governing permissions and limitations
+ *   under the License.
+ */
+
+jagg.template("page/master", function(inputs, outputs, jagg) {%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>WSO2 AppCloud</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('css/bootstrap-3.2.0/bootstrap.min.css'))%>">
+    <link rel="stylesheet" href="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('css/font-wso2-1.0.0/css/font-wso2.css'))%>">
+    <link rel="stylesheet" href="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('css/font-awesome-4.2.0/font-awesome.min.css'))%>">
+    <link rel="stylesheet" href="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('css/web-fonts/Roboto.css'))%>">
+    <link rel="stylesheet" href="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('css/nanoscroller-0.8.7/nanoscroller.css'))%>">
+    <link rel="stylesheet" href="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('css/select2-4.0.0/select2.min.css'))%>">
+    <link rel="stylesheet" href="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('css/select2-4.0.0/select2.override.css'))%>">
+    <link rel="stylesheet" href="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('css/styles.css'))%>">
+    <link rel="shortcut icon" href="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('assets/img/favicon.ico'))%>" type="image/x-icon"/>
+</head>
+
+<body class="top-notification-active">
+    <div class="top-notification">
+        <span class="hidden-xs">This new version of WSO2 integration Cloud still in Pre-Alpha stage. </span>
+        <span class="visible-xs">WSO2 Integration Cloud in pre alpha stage.</span>
+    </div>
+    <div id="wrap">
+        <div id="header"><% jagg.includeBlocks(outputs.header); %></div>
+        <div id="body"><% jagg.includeBlocks(outputs.body); %></div>
+        <div id="footer" class="footer-main"><% jagg.includeBlocks(outputs.footer); %></div>
+    </div>
+
+</body>
+
+</html>
+
+<% }); %>

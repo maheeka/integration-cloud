@@ -25,11 +25,6 @@ import org.wso2.intcloud.core.SQLQueryConstants;
 import org.wso2.intcloud.core.dto.Application;
 import org.wso2.intcloud.core.dto.ApplicationRuntime;
 import org.wso2.intcloud.core.dto.ApplicationType;
-import org.wso2.intcloud.core.dto.Container;
-import org.wso2.intcloud.core.dto.ContainerServiceProxy;
-import org.wso2.intcloud.core.dto.Deployment;
-import org.wso2.intcloud.core.dto.RuntimeProperty;
-import org.wso2.intcloud.core.dto.Tag;
 import org.wso2.intcloud.core.dto.Transport;
 import org.wso2.intcloud.core.dto.Version;
 
@@ -158,15 +153,15 @@ public class ApplicationDAO {
                 versionId = resultSet.getInt(1);
             }
 
-            List<Tag> tags = version.getTags();
-            if (tags != null) {
-                addTags(dbConnection, tags, version.getHashId(), tenantId);
-            }
-
-            List<RuntimeProperty> runtimeProperties = version.getRuntimeProperties();
-            if (runtimeProperties != null) {
-                addRunTimeProperties(dbConnection, runtimeProperties, version.getHashId(), tenantId);
-            }
+//            List<Tag> tags = version.getTags();
+//            if (tags != null) {
+//                addTags(dbConnection, tags, version.getHashId(), tenantId);
+//            }
+//
+//            List<RuntimeProperty> runtimeProperties = version.getRuntimeProperties();
+//            if (runtimeProperties != null) {
+//                addRunTimeProperties(dbConnection, runtimeProperties, version.getHashId(), tenantId);
+//            }
 
         } catch (SQLException e) {
             String msg = "Error occurred while adding application version to database for application id : " + applicationId +
@@ -179,219 +174,6 @@ public class ApplicationDAO {
         }
 
     }
-
-
-
-    /**
-     * Method for adding label, which associated with a version of an application, to database
-     *
-     * @param dbConnection database Connection
-     * @param tags list of tags
-     * @param versionHashId version hash id
-     * @param tenantId tenant id
-     * @throws IntCloudException
-     */
-    public void addTags(Connection dbConnection, List<Tag> tags, String versionHashId, int tenantId)
-            throws IntCloudException {
-
-        PreparedStatement preparedStatement = null;
-
-        try {
-
-            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.ADD_TAG);;
-
-            for (Tag tag : tags) {
-
-                preparedStatement.setString(1, tag.getTagName());
-                preparedStatement.setString(2, tag.getTagValue());
-                preparedStatement.setString(3, versionHashId);
-                preparedStatement.setString(4, tag.getDescription());
-                preparedStatement.setInt(5, tenantId);
-
-                preparedStatement.addBatch();
-            }
-
-            preparedStatement.executeBatch();
-
-        } catch (SQLException e) {
-            String msg = "Error occurred while adding tags to database for version with hash id : " + versionHashId + " in tenant : "
-                         + tenantId;
-            log.error(msg, e);
-            throw new IntCloudException(msg, e);
-
-        } finally {
-            DBUtil.closePreparedStatement(preparedStatement);
-        }
-    }
-
-    /**
-     * Method for adding runtime property, which belongs to a version of an application, to the database.
-     *
-     * @param dbConnection database connecton
-     * @param runtimeProperties list of runtime properties
-     * @param versionHashId version hash id
-     * @param tenantId tenant id
-     * @return
-     * @throws IntCloudException
-     */
-    public boolean addRunTimeProperties (Connection dbConnection, List<RuntimeProperty> runtimeProperties, String versionHashId,
-                                         int tenantId) throws IntCloudException {
-
-        PreparedStatement preparedStatement = null;
-
-        try {
-
-            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.ADD_RUNTIME_PROPERTY);
-
-            for (RuntimeProperty runtimeProperty : runtimeProperties) {
-
-                preparedStatement.setString(1, runtimeProperty.getPropertyName());
-                preparedStatement.setString(2, runtimeProperty.getPropertyValue());
-                preparedStatement.setString(3, versionHashId);
-                preparedStatement.setString(4, runtimeProperty.getDescription());
-                preparedStatement.setInt(5, tenantId);
-                preparedStatement.setBoolean(6, runtimeProperty.isSecured());
-
-                preparedStatement.addBatch();
-            }
-
-            preparedStatement.executeBatch();
-
-        } catch (SQLException e) {
-            String msg = "Error occurred while adding property to the database for version id : " + versionHashId + " in " +
-                         "tenant : " + tenantId;
-            log.error(msg, e);
-            throw new IntCloudException(msg, e);
-
-        } finally {
-            DBUtil.closePreparedStatement(preparedStatement);
-        }
-
-        return true;
-
-    }
-
-
-    public void addDeployment(Connection dbConnection, String versionHashId, Deployment deployment, int tenantId) throws IntCloudException{
-
-        int deploymentId = addDeployment(dbConnection, deployment, tenantId);
-        PreparedStatement preparedStatement = null;
-
-        try {
-            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.UPDATE_VERSION_WITH_DEPLOYMENT);
-            preparedStatement.setInt(1, deploymentId);
-            preparedStatement.setString(2, versionHashId);
-            preparedStatement.setInt(3, tenantId);
-
-            preparedStatement.executeUpdate();
-
-        } catch (SQLException e) {
-            String msg = "Error while updating deployment detail for version with hash id : " + versionHashId;
-            log.error(msg, e);
-            throw new IntCloudException(msg, e);
-        } finally {
-            DBUtil.closePreparedStatement(preparedStatement);
-        }
-    }
-
-
-    private int addDeployment(Connection dbConnection, Deployment deployment, int tenantId) throws IntCloudException{
-
-        PreparedStatement preparedStatement = null;
-        int deploymentId =-1;
-
-        try {
-
-            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.ADD_DEPLOYMENT, Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setString(1, deployment.getDeploymentName());
-            preparedStatement.setInt(2, deployment.getReplicas());
-            preparedStatement.setInt(3, tenantId);
-            preparedStatement.execute();
-
-            ResultSet rs = preparedStatement.getGeneratedKeys();
-
-            if(rs.next()) {
-                deploymentId = rs.getInt(1);
-            }
-
-            for(Container container: deployment.getContainers()){
-                addContainer(dbConnection, container, deploymentId, tenantId);
-            }
-
-        } catch (SQLException e) {
-            String msg = "Error while inserting deployment record.";
-            log.error(msg, e);
-            throw new IntCloudException(msg, e);
-        } finally {
-            DBUtil.closePreparedStatement(preparedStatement);
-        }
-        if(deploymentId==-1){
-            throw new IntCloudException("Failed to insert deployment record.");
-        }
-        return deploymentId;
-    }
-
-
-    public void addContainer(Connection dbConnection, Container container, int deploymentId, int tenantId) throws IntCloudException{
-
-        PreparedStatement preparedStatement = null;
-        int containerId = -1;
-
-        try {
-
-            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.ADD_CONTAINER,
-                                                              Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setString(1, container.getImageName());
-            preparedStatement.setString(2, container.getImageVersion());
-            preparedStatement.setInt(3, deploymentId);
-            preparedStatement.setInt(4, tenantId);
-
-            preparedStatement.execute();
-
-            ResultSet rs = preparedStatement.getGeneratedKeys();
-            if(rs.next()) {
-                containerId = rs.getInt(1);
-            }
-            for(ContainerServiceProxy containerServiceProxy : container.getServiceProxies()){
-                addContainerServiceProxy(dbConnection, containerServiceProxy, containerId, tenantId);
-            }
-
-        } catch (SQLException e) {
-            String msg = "Error while inserting deployment container record.";
-            log.error(msg, e);
-            throw new IntCloudException(msg, e);
-        } finally {
-            DBUtil.closePreparedStatement(preparedStatement);
-        }
-    }
-
-    public void addContainerServiceProxy(Connection dbConnection, ContainerServiceProxy containerServiceProxy,
-                                         int containerId, int tenantId) throws IntCloudException {
-
-        PreparedStatement preparedStatement = null;
-
-        try {
-
-            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.ADD_CONTAINER_SERVICE_PROXY,
-                                                              Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setString(1, containerServiceProxy.getServiceName());
-            preparedStatement.setString(2, containerServiceProxy.getServiceProtocol());
-            preparedStatement.setInt(3, containerServiceProxy.getServicePort());
-            preparedStatement.setString(4, containerServiceProxy.getServiceBackendPort());
-            preparedStatement.setInt(5, containerId);
-            preparedStatement.setInt(6, tenantId);
-            preparedStatement.setString(7, containerServiceProxy.getHostURL());
-            preparedStatement.execute();
-
-        } catch (SQLException e) {
-            String msg = "Error while inserting container service proxy record.";
-            log.error(msg, e);
-            throw new IntCloudException(msg, e);
-        } finally {
-            DBUtil.closePreparedStatement(preparedStatement);
-        }
-    }
-
 
     public void updateApplicationIcon(Connection dbConnection, InputStream inputStream, int applicationId)
             throws IntCloudException {
@@ -448,55 +230,6 @@ public class ApplicationDAO {
         }
         return true;
     }
-
-    public void updateRuntimeProperty(Connection dbConnection, String versionHashId, String oldKey, String newKey,
-                                      String newValue) throws IntCloudException {
-
-        PreparedStatement preparedStatement = null;
-
-        try {
-
-            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.UPDATE_RUNTIME_PROPERTIES);
-            preparedStatement.setString(1, newKey);
-            preparedStatement.setString(2, newValue);
-            preparedStatement.setString(3, versionHashId);
-            preparedStatement.setString(4, oldKey);
-
-            preparedStatement.executeUpdate();
-
-        } catch (SQLException e) {
-            String msg = "Error while updating runtime property Key : " + oldKey + " for version with hash id : " +
-                         versionHashId;
-            log.error(msg, e);
-            throw new IntCloudException(msg, e);
-        } finally {
-            DBUtil.closePreparedStatement(preparedStatement);
-        }
-    }
-
-    public void updateTag(Connection dbConnection, String versionHashId, String oldKey, String newKey, String newValue)
-            throws IntCloudException {
-
-        PreparedStatement preparedStatement = null;
-
-        try {
-            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.UPDATE_TAG);
-            preparedStatement.setString(1, newKey);
-            preparedStatement.setString(2, newValue);
-            preparedStatement.setString(3, versionHashId);
-            preparedStatement.setString(4, oldKey);
-
-            preparedStatement.executeUpdate();
-
-        } catch (SQLException e) {
-            String msg = "Error while updating tag Key : " + oldKey + " for version with hash id : " + versionHashId;
-            log.error(msg, e);
-            throw new IntCloudException(msg, e);
-        } finally {
-            DBUtil.closePreparedStatement(preparedStatement);
-        }
-    }
-
 
     /**
      * Method for getting the list of applications of a tenant from database with minimal information.
@@ -917,8 +650,8 @@ public class ApplicationDAO {
                 version.setStatus(resultSet.getString(SQLQueryConstants.STATUS));
                 version.setConSpecCpu(resultSet.getString(SQLQueryConstants.CON_SPEC_CPU));
                 version.setConSpecMemory(resultSet.getString((SQLQueryConstants.CON_SPEC_MEMORY)));
-                version.setTags(getAllTagsOfVersion(dbConnection, version.getHashId()));
-                version.setRuntimeProperties(getAllRuntimePropertiesOfVersion(dbConnection, version.getHashId()));
+//                version.setTags(getAllTagsOfVersion(dbConnection, version.getHashId()));
+//                version.setRuntimeProperties(getAllRuntimePropertiesOfVersion(dbConnection, version.getHashId()));
 
                 versions.add(version);
             }
@@ -934,96 +667,6 @@ public class ApplicationDAO {
 
         return versions;
     }
-
-
-    /**
-     * Method for retrieving list of labels belongs to a given version of an application.
-     *
-     * @param dbConnection database connection
-     * @param versionHashId version hash id
-     * @return
-     * @throws IntCloudException
-     */
-    public List<Tag> getAllTagsOfVersion(Connection dbConnection, String versionHashId) throws IntCloudException {
-
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-        List<Tag> tags = new ArrayList<>();
-        try {
-
-            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.GET_ALL_TAGS_OF_VERSION);
-            preparedStatement.setString(1, versionHashId);
-
-            resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()){
-
-                Tag tag = new Tag();
-                tag.setTagName(resultSet.getString(SQLQueryConstants.NAME));
-                tag.setTagValue(resultSet.getString(SQLQueryConstants.VALUE));
-                tag.setDescription(resultSet.getString(SQLQueryConstants.DESCRIPTION));
-
-                tags.add(tag);
-            }
-
-        } catch (SQLException e) {
-            String msg = "Error while retrieving tags from database for version with hash id : " + versionHashId;
-            log.error(msg, e);
-            throw new IntCloudException(msg, e);
-        } finally {
-            DBUtil.closeResultSet(resultSet);
-            DBUtil.closePreparedStatement(preparedStatement);
-        }
-
-        return tags;
-    }
-
-
-    /**
-     * Method for retrieving all the runtime properties of a given version of an application.
-     *
-     * @param dbConnection database connection
-     * @param versionHashId version hash id
-     * @return
-     * @throws IntCloudException
-     */
-    public List<RuntimeProperty> getAllRuntimePropertiesOfVersion(Connection dbConnection, String versionHashId)
-            throws IntCloudException {
-
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-        List<RuntimeProperty> runtimeProperties = new ArrayList<>();
-
-        try {
-
-            preparedStatement = dbConnection.prepareStatement(
-                    SQLQueryConstants.GET_ALL_RUNTIME_PROPERTIES_OF_VERSION);
-            preparedStatement.setString(1, versionHashId);
-
-            resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()){
-
-                RuntimeProperty runtimeProperty = new RuntimeProperty();
-                runtimeProperty.setPropertyName(resultSet.getString(SQLQueryConstants.NAME));
-                runtimeProperty.setPropertyValue(resultSet.getString(SQLQueryConstants.VALUE));
-                runtimeProperty.setDescription(resultSet.getString(SQLQueryConstants.DESCRIPTION));
-                runtimeProperty.setSecured(resultSet.getBoolean(SQLQueryConstants.IS_SECURED));
-
-                runtimeProperties.add(runtimeProperty);
-            }
-
-        } catch (SQLException e) {
-            String msg = "Error while retrieving the runtime properties from the database for version with hash id : " +
-                         versionHashId;
-            log.error(msg, e);
-            throw new IntCloudException(msg, e);
-        } finally {
-            DBUtil.closeResultSet(resultSet);
-            DBUtil.closePreparedStatement(preparedStatement);
-        }
-
-        return runtimeProperties;
-    }
-
 
     /**
      * Method for getting the id of an application with the given hash id.
@@ -1217,113 +860,6 @@ public class ApplicationDAO {
         }
         return applicationRuntime;
     }
-
-    public Deployment getDeployment(String versionHashId) throws IntCloudException{
-
-        Connection dbConnection = DBUtil.getDBConnection();
-        PreparedStatement preparedStatement = null;
-        Deployment deployment = new Deployment();
-
-        try {
-
-            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.GET_DEPLOYMENT);
-            preparedStatement.setString(1, versionHashId);
-
-            ResultSet rs =  preparedStatement.executeQuery();
-            if(rs.next()) {
-                deployment.setDeploymentName(rs.getString(SQLQueryConstants.NAME));
-                deployment.setReplicas(rs.getInt(SQLQueryConstants.REPLICAS));
-                deployment.setContainers(getContainers(rs.getInt(SQLQueryConstants.ID), versionHashId));
-            }
-
-            dbConnection.commit();
-
-        } catch (SQLException e) {
-            String msg = "Error while inserting deployment record.";
-            log.error(msg, e);
-            throw new IntCloudException(msg, e);
-        } finally {
-            DBUtil.closePreparedStatement(preparedStatement);
-            DBUtil.closeConnection(dbConnection);
-        }
-
-        return deployment;
-    }
-
-
-    public Set<Container> getContainers(int deploymentId, String versionHashId) throws IntCloudException{
-
-        Connection dbConnection = DBUtil.getDBConnection();
-        PreparedStatement preparedStatement = null;
-        Set<Container> containers = new HashSet<>();
-
-        try {
-
-            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.GET_CONTAINER);
-            preparedStatement.setInt(1, deploymentId);
-
-            ResultSet rs = preparedStatement.executeQuery();
-            while(rs.next()) {
-
-                Container container = new Container();
-                container.setImageName(rs.getString(SQLQueryConstants.NAME));
-                container.setImageVersion(rs.getString(SQLQueryConstants.VERSION));
-                container.setServiceProxies(getContainerServiceProxies(rs.getInt(SQLQueryConstants.ID)));
-
-                List<RuntimeProperty> runtimeProperties = getAllRuntimePropertiesOfVersion(dbConnection, versionHashId);
-                container.setRuntimeProperties(runtimeProperties);
-                containers.add(container);
-
-            }
-            dbConnection.commit();
-
-        } catch (SQLException e) {
-            String msg = "Error while inserting deployment container record.";
-            log.error(msg, e);
-            throw new IntCloudException(msg, e);
-        } finally {
-            DBUtil.closePreparedStatement(preparedStatement);
-            DBUtil.closeConnection(dbConnection);
-        }
-        return containers;
-    }
-
-
-    private Set<ContainerServiceProxy> getContainerServiceProxies(int containerId) throws IntCloudException{
-
-        Connection dbConnection = DBUtil.getDBConnection();
-        PreparedStatement preparedStatement = null;
-        Set<ContainerServiceProxy> containerServiceProxies= new HashSet<>();
-
-        try {
-
-            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.GET_CONTAINER_SERVICE_PROXIES);
-            preparedStatement.setInt(1, containerId);
-
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while(resultSet.next()){
-                ContainerServiceProxy containerServiceProxy = new ContainerServiceProxy();
-                containerServiceProxy.setServiceName(resultSet.getString(SQLQueryConstants.NAME));
-                containerServiceProxy.setServiceProtocol(resultSet.getString(SQLQueryConstants.PROTOCOL));
-                containerServiceProxy.setServicePort(resultSet.getInt(SQLQueryConstants.PORT));
-                containerServiceProxy.setServiceBackendPort(resultSet.getString(SQLQueryConstants.BACKEND_PORT));
-                containerServiceProxy.setHostURL(resultSet.getString(SQLQueryConstants.HOST_URL));
-                containerServiceProxies.add(containerServiceProxy);
-            }
-
-            dbConnection.commit();
-
-        } catch (SQLException e) {
-            String msg = "Error while inserting deployment service proxy record.";
-            log.error(msg, e);
-            throw new IntCloudException(msg, e);
-        } finally {
-            DBUtil.closePreparedStatement(preparedStatement);
-            DBUtil.closeConnection(dbConnection);
-        }
-        return containerServiceProxies;
-    }
-
 
     public List<Transport> getTransportsForRuntime(int runtimeId) throws IntCloudException{
 
@@ -1541,44 +1077,7 @@ public class ApplicationDAO {
         }
         return appCount;
     }
-    /**
-     * Get service proxy for given version.
-     *
-     * @param versionHashId
-     * @return
-     * @throws IntCloudException
-     */
-    public List<ContainerServiceProxy> getContainerServiceProxyByVersion(String versionHashId)
-            throws IntCloudException {
-        Connection dbConnection = DBUtil.getDBConnection();
-        PreparedStatement preparedStatement = null;
-        List<ContainerServiceProxy> containerServiceProxies = new ArrayList<ContainerServiceProxy>();
 
-        try {
-            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.GET_CONTAINER_SERVICE_PROXY);
-            preparedStatement.setString(1, versionHashId);
-            ResultSet rs = preparedStatement.executeQuery();
-            while (rs.next()) {
-                ContainerServiceProxy containerServiceProxy = new ContainerServiceProxy();
-                containerServiceProxy.setServiceName(rs.getString(SQLQueryConstants.NAME));
-                containerServiceProxy.setServiceProtocol(rs.getString(SQLQueryConstants.PROTOCOL));
-                containerServiceProxy.setServicePort(rs.getInt(SQLQueryConstants.PORT));
-                containerServiceProxy.setServiceBackendPort(rs.getString(SQLQueryConstants.BACKEND_PORT));
-                containerServiceProxy.setHostURL(rs.getString(SQLQueryConstants.HOST_URL));
-                containerServiceProxies.add(containerServiceProxy);
-            }
-
-            dbConnection.commit();
-        } catch (SQLException e) {
-            String msg = "Error while getting container service proxy with version hash id : " + versionHashId;
-            log.error(msg, e);
-            throw new IntCloudException(msg, e);
-        } finally {
-            DBUtil.closePreparedStatement(preparedStatement);
-            DBUtil.closeConnection(dbConnection);
-        }
-        return containerServiceProxies;
-    }
 
     /**
      * Update host url from container service proxy for custom url.
@@ -1638,7 +1137,6 @@ public class ApplicationDAO {
 
         return updated;
     }
-
 
     public Version[] getApplicationVersionsByRunningTimePeriod(int numberOfHours) throws IntCloudException {
         Connection dbConnection = DBUtil.getDBConnection();

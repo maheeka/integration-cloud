@@ -25,6 +25,5 @@ public class IntCloudConstant {
 
     public static final String CONFIG_FOLDER = "intcloud";
     public static final String CONFIG_FILE_NAME = "intcloud.properties";
-    public static final String SIGNED_JWT_AUTH_USERNAME = "Username";
 
 }

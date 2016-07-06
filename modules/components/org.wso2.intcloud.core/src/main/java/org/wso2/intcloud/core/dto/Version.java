@@ -26,8 +26,8 @@ public class Version {
     private int runtimeId;
     private String runtimeName;
     private String status;
-    private List<RuntimeProperty> runtimeProperties;
-    private List<Tag> tags;
+//    private List<RuntimeProperty> runtimeProperties;
+//    private List<Tag> tags;
     private int tenantId;
     private Timestamp createdTimestamp;
     private String conSpecCpu;
@@ -73,21 +73,21 @@ public class Version {
         this.status = status;
     }
 
-    public List<RuntimeProperty> getRuntimeProperties() {
-        return runtimeProperties;
-    }
-
-    public void setRuntimeProperties(List<RuntimeProperty> runtimeProperties) {
-        this.runtimeProperties = runtimeProperties;
-    }
-
-    public List<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<Tag> tags) {
-        this.tags = tags;
-    }
+//    public List<RuntimeProperty> getRuntimeProperties() {
+//        return runtimeProperties;
+//    }
+//
+//    public void setRuntimeProperties(List<RuntimeProperty> runtimeProperties) {
+//        this.runtimeProperties = runtimeProperties;
+//    }
+//
+//    public List<Tag> getTags() {
+//        return tags;
+//    }
+//
+//    public void setTags(List<Tag> tags) {
+//        this.tags = tags;
+//    }
 
     public int getTenantId() {
         return tenantId;

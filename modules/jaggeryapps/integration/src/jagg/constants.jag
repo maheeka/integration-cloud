@@ -1,0 +1,72 @@
+<%
+/*
+ * Copyright (c) 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *   WSO2 Inc. licenses this file to you under the Apache License,
+ *   Version 2.0 (the "License"); you may not use this file except
+ *   in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing,
+ *   software distributed under the License is distributed on an
+ *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *   KIND, either express or implied.  See the License for the
+ *   specific language governing permissions and limitations
+ *   under the License.
+ */
+var TMP_UPLOADED_APPLICATIONS_PATH = "tmpUploadedApps";
+var ARTIFACT_UPLOAD_DIRECTORY = "/tmp/";
+var POD_TIMEOUT = "Pod.TimeOut";
+var PROPERTY_INTCLOUD_DEPLOYMENT_DIR_PATH="IntCloud.DeploymentDirPath";
+var PROPERTY_DOCKER_REGISTRY_URL="DockerRegistryURL";
+var PROPERTY_STORAGE_SERVER_URL="StorageServerURL";
+var PROPERTY_RSS_ENVIRONMENT_NAME="RSSEnvironmentName";
+var DOCKER_FILE_NAME = "Dockerfile";
+var TENANT_DOMAIN_NAME = "tenantDomainName";
+var SUPER_TENANT_DOMAIN_NAME = "carbon.super";
+var CLOUD_TYPE = "AppCloud";
+var DOCUMENTATION_REDIRECTION_URL = "Documentation.Url";
+var SUPPORT_REDIRECTION_URL = "Support.Url";
+var APP_TYPES_PROPERTIES_CONFIG = "/site/themes/default/templates/apptype/select/app-types-properties.json";
+var KUB_SERVICE_PORT = 80;
+var KUB_SERVICE_BACKEND_PORT = 8080;
+var KUB_SERVICE_PHP_BACKEND_PORT = 80;
+var KUB_SERVICE_PROTOCOL = "TCP";
+var DASHBOARD_BASE_URL="https://analytics.cloud.wso2.com/monitoring/webapps/";
+var NOT_ALLOWED_ENV_VARIABLES = "EnvironmentVariables.NotAllowedVariables"
+
+//events related constants
+var DATABASE_ADD = "Adding application to database";
+var DOCKER_FILE_CREATE = "Creating docker file";
+var DOCKER_IMAGE_BUILD = "Building docker image";
+var DOCKER_REGISTRY_PUSH = "Updating docker registry";
+var KUBE_DEPLOY = "Initializing deployment";
+var INGRESS = "Creating ingress";
+var POD_STATUS = "Status";
+
+var ESB_CONNECT = "Connecting to Integration Server";
+var ESB_DEPLOY = "Deploying Integration";
+var ESB_DEPLOY_COMPLETE = "Verifying Integration Deployment"
+var LOAD_PARAMETERS = "Loading Integration Parameters"
+
+var EVENT_SUCCEEDED = "success";
+var EVENT_PENDING = "pending";
+var EVENT_FAILED = "failed";
+
+var UNAUTHORIZED_ERROR_RESPONSE ={"errorCode":"401","errorMessage":"Unauthorized access!!!"};
+
+var APPLICATION_RUNNING = "running";
+var APPLICATION_CREATED = "created";
+var APPLICATION_ERROR = "error";
+var APPLICATION_STOPPED = "stopped";
+var APPLICATION_INACTIVE = "inactive";
+
+var FILE_EXTENSTION_ALTER = ".upload";
+var FILE_EXTENTION_ZIP = "zip";
+
+var PERMISSION_EXECUTE = "ui.execute";
+var LOGIN_PERMISSION = "AppCloud.Login.Permission"
+
+%>

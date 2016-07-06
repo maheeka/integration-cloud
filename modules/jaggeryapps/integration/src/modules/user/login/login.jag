@@ -1,0 +1,93 @@
+<%
+/*
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *   WSO2 Inc. licenses this file to you under the Apache License,
+ *   Version 2.0 (the "License"); you may not use this file except
+ *   in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing,
+ *   software distributed under the License is distributed on an
+ *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *   KIND, either express or implied.  See the License for the
+ *   specific language governing permissions and limitations
+ *   under the License.
+ */
+
+include("/jagg/jagg.jag");
+include("/jagg/constants.jag");
+
+var log = new Log('modules/user/login/login.jag');
+
+var modManager = jagg.module("manager");
+var carbon = require('carbon');
+var server = carbon.server;
+var multitenancy = carbon.multitenancy;
+
+function login(userName, password){
+	var tenantDomain = SUPER_TENANT_DOMAIN_NAME;
+	if (userName.indexOf("@") != -1) {
+		tenantDomain = userName.substring(userName.lastIndexOf('@') + 1);
+	} else {	// else assume super tenant
+		tenantDomain = SUPER_TENANT_DOMAIN_NAME;
+	}
+	var ws = require('ws');
+	var context=multitenancy.getPrivilegedCarbonContext();
+ 	var tenantManager= multitenancy.getTenantManager();
+	var finalResult={};
+	try{
+        context.startTenantFlow();
+        context.getThreadLocalCarbonContext().setTenantId(tenantManager.getTenantId(tenantDomain));
+        context.getThreadLocalCarbonContext().setTenantDomain(tenantDomain);
+        context.getThreadLocalCarbonContext().setUsername(userName);
+		var result = server.Server.prototype.authenticate(userName,password);
+		if(result === true){
+		    var permission = modManager.getPropertyValue(LOGIN_PERMISSION);
+            var isUserAuthorized = modManager.checkAuthorizationForUser(userName, permission);
+            if (isUserAuthorized){
+                jagg.setUser(userName);
+                finalResult.error="false";
+                finalResult.message="User successfully logged in";
+                finalResult.username=userName;
+			} else {
+			    finalResult.error="true";
+                finalResult.message="Authorization Failed.";
+			}
+		}else{
+			finalResult.error="true";
+			finalResult.message="Authenitcation Failed.";
+		}
+		return stringify(finalResult);
+	} catch(e){
+		log.error("Error while authenticating user : " + userName);
+		log.error(e);
+		throw e;
+	} finally {
+	    context.endTenantFlow();
+	}
+}
+
+function logout(){
+    var log = new Log();
+    var username = jagg.getUser();
+    var finalResult={};
+
+    if(username!=null){
+        jagg.setUser(null)
+         print(" error:false message:'User successfully logged out username:"+username);
+	finalResult.error="false";
+	finalResult.message="User successfully logged out";
+       // print('error:false message:User successfully logged out');
+	 return stringify(finalResult);
+    }
+	finalResult.error="true";
+	finalResult.message="User already logged out";
+        print('error:true message:already logged out');
+	 return stringify(finalResult);
+
+}
+
+%>

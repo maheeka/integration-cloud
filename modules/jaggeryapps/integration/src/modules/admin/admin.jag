@@ -1,0 +1,81 @@
+<%
+/*
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *   WSO2 Inc. licenses this file to you under the Apache License,
+ *   Version 2.0 (the "License"); you may not use this file except
+ *   in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing,
+ *   software distributed under the License is distributed on an
+ *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *   KIND, either express or implied.  See the License for the
+ *   specific language governing permissions and limitations
+ *   under the License.
+ */
+
+include("/jagg/jagg.jag");
+include("/jagg/constants.jag");
+
+var log = new Log("module/admin/admin.jag");
+var carbon = require('carbon');
+var context = carbon.multitenancy.getPrivilegedCarbonContext();
+var ApplicationManager = Packages.org.wso2.appcloud.core.ApplicationManager;
+var Util = Packages.org.wso2.intcloud.core.Util;
+var applicationModule = jagg.module("application");
+var managerModule = jagg.module("manager");
+
+var stopIdleApplicationsByRunningTimePeriod = function (numberOfHours) {
+    var idleApplications = ApplicationManager.getApplicationVersionsByRunningTimePeriod(numberOfHours);
+    log.debug('number of idle applications found:' + idleApplications.length);
+    for (var i = 0; i < idleApplications.length; i++) {
+        var idleApplication = idleApplications[i];
+        try {
+            log.info("Stopping idle application with hashId:" + idleApplication.getHashId());
+            stopIdleApplicationByRunningTimePeriod(idleApplication.getHashId(), idleApplication.getTenantId());
+        } catch (e) {
+            log.error("Failed to stop application with hashId:" + idleApplication.getHashId() +
+                    " and continue stopping other applications.");
+            log.error(e);
+        }
+    }
+};
+
+var stopIdleApplicationByRunningTimePeriod = function (versionHashId, tenantId) {
+    try {
+        context.startTenantFlow();
+        context.getThreadLocalCarbonContext().setTenantDomain(managerModule.getTenantDomainById(tenantId), true);
+        // delete application from kubernetes
+        applicationModule.deleteApplicationFromKubernetes(versionHashId);
+        // update application status to stopped
+        applicationModule.updateApplicationStatus(versionHashId, APPLICATION_INACTIVE);
+        applicationModule.deleteEventsOfAppVersions(versionHashId);
+    } catch (e) {
+        log.error('error occurred when stopping idle application with hashId:');
+        log.error(e);
+    } finally {
+        context.endTenantFlow();
+    }
+};
+
+
+var whiteListApplicationVersion = function (applicationName, applicationRevision, tenantDomain) {
+    var versionHashId = getVersionHashId(applicationName, applicationRevision, tenantDomain);
+    ApplicationManager.whiteListApplicationVersion(versionHashId);
+};
+
+var whiteListTenant = function (tenantDomain, maxAppCount) {
+    var tenantId = modManager.getTenantIdForGivenTenantDomain(tenantDomain);
+    ApplicationManager.whiteListTenant(tenantId, maxAppCount);
+};
+
+var getVersionHashId = function(applicationName, versionName, tenantDomain){
+    var tenantId = modManager.getTenantIdForGivenTenantDomain(tenantDomain);
+    var versionHashId = Util.getVersionHashId(applicationName, versionName, tenantId)
+    return versionHashId;
+}
+
+%>
