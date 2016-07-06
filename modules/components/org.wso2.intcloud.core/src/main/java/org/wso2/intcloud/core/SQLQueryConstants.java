@@ -70,29 +70,11 @@ public class SQLQueryConstants {
             "(?, ?, ?, ?, ?, ?, (SELECT id FROM AC_APP_TYPE WHERE name=?))";
 
     public static final String ADD_VERSION =
-            "INSERT INTO AC_VERSION (name, hash_id, application_id, runtime_id, tenant_id, con_spec_cpu, con_spec_memory) VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-    public static final String ADD_TAG =
-            "INSERT INTO AC_TAG (name, value, version_id, description, tenant_id) values (?, ?, (SELECT id FROM " +
-            "AC_VERSION WHERE hash_id=?), ?, ?)";
-
-    public static final String ADD_RUNTIME_PROPERTY =
-            "INSERT INTO AC_RUNTIME_PROPERTY (name, value, version_id, description, tenant_id, is_secured) values " +
-            "(?, ?, (SELECT id FROM AC_VERSION WHERE hash_id=?), ?, ?, ?)";
+            "INSERT INTO AC_VERSION (name, hash_id, application_id, runtime_id, tenant_id) VALUES (?, ?, ?, ?, ?)";
 
     public static final String ADD_APP_CREATION_EVENT =
             "INSERT INTO AC_EVENT (name, status, version_id, timestamp, description, tenant_id) values (?, ?, (SELECT id" +
             " FROM AC_VERSION WHERE hash_id=?), ?, ?, ?)";
-
-    public static final String ADD_DEPLOYMENT =
-            "INSERT INTO AC_DEPLOYMENT (name, replicas, tenant_id) values (?, ?, ?)";
-
-    public static final String ADD_CONTAINER =
-            "INSERT INTO AC_CONTAINER (name, version, deployment_id, tenant_id) values (?, ?, ?, ?)";
-
-    public static final String ADD_CONTAINER_SERVICE_PROXY =
-            "INSERT INTO AC_CONTAINER_SERVICE_PROXY (name, protocol, port, backend_port, container_id, tenant_id, host_url) " +
-                    "values (?, ?, ?, ?, ?, ?, ?)";
 
 	public static final String ADD_WHITE_LISTED_TENANT =
 			"INSERT INTO AC_WHITE_LISTED_TENANTS (tenant_id, max_app_count) values (?, ?)";
@@ -151,15 +133,6 @@ public class SQLQueryConstants {
     public static final String GET_VERSION_ID =
             "SELECT id FROM AC_VERSION WHERE hash_id=?";
 
-    public static final String GET_ALL_TAGS_OF_VERSION =
-            "SELECT * FROM AC_TAG WHERE version_id=(SELECT id FROM AC_VERSION WHERE hash_id=?)";
-
-    public static final String GET_ALL_RUNTIME_PROPERTIES_OF_VERSION =
-            "SELECT * FROM AC_RUNTIME_PROPERTY WHERE version_id=(SELECT id FROM AC_VERSION WHERE hash_id=?)";
-
-    public static final String GET_CONTAINER_SERVICE_PROXIES =
-            "SELECT * FROM AC_CONTAINER_SERVICE_PROXY WHERE container_id=?";
-
     public static final String GET_TRANSPORTS_FOR_RUNTIME =
             "SELECT name, port, protocol, service_prefix FROM AC_TRANSPORT WHERE id IN (SELECT transport_id FROM AC_RUNTIME_TRANSPORT " +
             "WHERE runtime_id=?)";
@@ -176,21 +149,6 @@ public class SQLQueryConstants {
     public static final String GET_ALL_EVENTS_OF_APPLICATION =
             "select * from AC_EVENT A where A.version_id = (SELECT id FROM AC_VERSION WHERE hash_id=?) and A.id >= " +
             "(select MAX(B.id) from AC_EVENT B where B.version_id = A.version_id and B.name = A.name)";
-
-    public static final String GET_DEPLOYMENT =
-            "SELECT * from AC_DEPLOYMENT where id=(SELECT deployment_id from AC_VERSION WHERE hash_id=?)";
-
-    public static final String GET_CONTAINER =
-            "SELECT * FROM AC_CONTAINER WHERE deployment_id=?";
-
-    public static final String GET_CONTAINER_SERVICE_PROXY = "SELECT AC_CONTAINER_SERVICE_PROXY.name, " +
-            "AC_CONTAINER_SERVICE_PROXY.protocol, AC_CONTAINER_SERVICE_PROXY.port, " +
-            "AC_CONTAINER_SERVICE_PROXY.backend_port, AC_CONTAINER_SERVICE_PROXY.host_url " +
-            "FROM AC_CONTAINER_SERVICE_PROXY " +
-            "INNER JOIN AC_CONTAINER ON AC_CONTAINER_SERVICE_PROXY.container_id = AC_CONTAINER.id " +
-            "INNER JOIN AC_DEPLOYMENT ON AC_CONTAINER.deployment_id = AC_DEPLOYMENT.id " +
-            "INNER JOIN AC_VERSION ON AC_DEPLOYMENT.id = AC_VERSION.deployment_id WHERE AC_VERSION.hash_id=?";
-
 
     public static final String GET_ALL_APP_VERSIONS_CREATED_BEFORE_X_DAYS_AND_NOT_WHITE_LISTED =
             "SELECT * FROM AC_VERSION WHERE is_white_listed=0 AND status='running' AND timestamp <  timestampadd(HOUR, -?, now());";

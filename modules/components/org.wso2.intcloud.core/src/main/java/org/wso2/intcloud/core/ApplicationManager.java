@@ -82,7 +82,7 @@ public class ApplicationManager {
 
         try {
             int applicationId = applicationDAO.getApplicationId(dbConnection, applicationHashId);
-            applicationDAO.addVersion(dbConnection, version, "", applicationId, tenantId);
+            applicationDAO.addVersion(dbConnection, version, applicationId, tenantId);
             dbConnection.commit();
         } catch (SQLException e) {
             String msg = "Error while committing the application version adding transaction for application id : " +

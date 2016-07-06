@@ -85,7 +85,7 @@ public class ApplicationDAO {
 
             if (versions != null) {
                 for (Version version : versions) {
-                    addVersion(dbConnection, version, application.getApplicationName(), applicationId, tenantId);
+                    addVersion(dbConnection, version, applicationId, tenantId);
                 }
             }
 
@@ -127,7 +127,7 @@ public class ApplicationDAO {
      * @return
      * @throws IntCloudException
      */
-    public void addVersion(Connection dbConnection, Version version, String applicationName, int applicationId, int tenantId)
+    public void addVersion(Connection dbConnection, Version version, int applicationId, int tenantId)
             throws IntCloudException {
 
 
@@ -143,8 +143,6 @@ public class ApplicationDAO {
             preparedStatement.setInt(3, applicationId);
             preparedStatement.setInt(4, version.getRuntimeId());
             preparedStatement.setInt(5, tenantId);
-            preparedStatement.setString(6, version.getConSpecCpu());
-            preparedStatement.setString(7, version.getConSpecMemory());
 
             preparedStatement.execute();
 
@@ -648,8 +646,6 @@ public class ApplicationDAO {
                 version.setRuntimeName(resultSet.getString(SQLQueryConstants.RUNTIME_NAME));
                 version.setRuntimeId(resultSet.getInt(SQLQueryConstants.RUNTIME_ID));
                 version.setStatus(resultSet.getString(SQLQueryConstants.STATUS));
-                version.setConSpecCpu(resultSet.getString(SQLQueryConstants.CON_SPEC_CPU));
-                version.setConSpecMemory(resultSet.getString((SQLQueryConstants.CON_SPEC_MEMORY)));
 //                version.setTags(getAllTagsOfVersion(dbConnection, version.getHashId()));
 //                version.setRuntimeProperties(getAllRuntimePropertiesOfVersion(dbConnection, version.getHashId()));
 

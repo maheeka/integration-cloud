@@ -26,12 +26,8 @@ public class Version {
     private int runtimeId;
     private String runtimeName;
     private String status;
-//    private List<RuntimeProperty> runtimeProperties;
-//    private List<Tag> tags;
     private int tenantId;
     private Timestamp createdTimestamp;
-    private String conSpecCpu;
-    private String conSpecMemory;
 
     public String getVersionName() {
         return versionName;
@@ -73,22 +69,6 @@ public class Version {
         this.status = status;
     }
 
-//    public List<RuntimeProperty> getRuntimeProperties() {
-//        return runtimeProperties;
-//    }
-//
-//    public void setRuntimeProperties(List<RuntimeProperty> runtimeProperties) {
-//        this.runtimeProperties = runtimeProperties;
-//    }
-//
-//    public List<Tag> getTags() {
-//        return tags;
-//    }
-//
-//    public void setTags(List<Tag> tags) {
-//        this.tags = tags;
-//    }
-
     public int getTenantId() {
         return tenantId;
     }
@@ -105,19 +85,4 @@ public class Version {
         this.createdTimestamp = createdTimestamp;
     }
 
-    public void setConSpecCpu(String conSpecCpu) {
-        this.conSpecCpu = conSpecCpu;
-    }
-
-    public String getConSpecCpu() {
-        return conSpecCpu;
-    }
-
-    public void setConSpecMemory(String conSpecMemory) {
-        this.conSpecMemory = conSpecMemory;
-    }
-
-    public String getConSpecMemory() {
-        return conSpecMemory;
-    }
 }
